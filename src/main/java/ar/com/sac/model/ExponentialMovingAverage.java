@@ -3,7 +3,7 @@ package ar.com.sac.model;
 import java.math.BigDecimal;
 import java.util.List;
 
-public class ExponentialMovingAverage {
+public class ExponentialMovingAverage implements Formula{
    
    private int period;
    private List<Quote> quotes;
