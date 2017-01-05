@@ -18,6 +18,9 @@ public class Quote {
    
    private Long volume;
    
+   public Quote(){
+   }
+   
    public Quote(StockQuote stockQuote){
       this.symbol = stockQuote.getSymbol();
       this.date = stockQuote.getLastTradeTime();
@@ -73,4 +76,39 @@ public class Quote {
       return volume;
    }
 
+   
+   public synchronized void setSymbol( String symbol ) {
+      this.symbol = symbol;
+   }
+
+   
+   public synchronized void setDate( Calendar date ) {
+      this.date = date;
+   }
+
+   
+   public synchronized void setOpen( BigDecimal open ) {
+      this.open = open;
+   }
+
+   
+   public synchronized void setLow( BigDecimal low ) {
+      this.low = low;
+   }
+
+   
+   public synchronized void setHigh( BigDecimal high ) {
+      this.high = high;
+   }
+
+   
+   public synchronized void setClose( BigDecimal close ) {
+      this.close = close;
+   }
+
+   
+   public synchronized void setVolume( Long volume ) {
+      this.volume = volume;
+   }
+   
 }
