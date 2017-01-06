@@ -21,19 +21,19 @@ public class RelativeStrengthIndex implements Formula {
       
       for(int i = quotes.size() - 1 ; i > quotes.size() - period -1  ; i--){
          j = i-1;
-            q1 = quotes.get( i );
-            q2 = quotes.get( j );
-            change = q2.getClose().doubleValue() - q1.getClose().doubleValue();
-            if(change < 0){
-               avgLoss += change*-1;
-            }else{
-               avgGain += change;
-            }
+         q1 = quotes.get( i );
+         q2 = quotes.get( j );
+         change = q2.getClose().doubleValue() - q1.getClose().doubleValue();
+         if(change < 0){
+            avgLoss += change*-1;
+         }else{
+            avgGain += change;
+         }
       }
       avgGain = avgGain / period;
       avgLoss = avgLoss / period;
       
-      for(int i = quotes.size() - period -1 ; i > 1  ; i--){
+      for(int i = quotes.size() - period -1 ; i >= 1  ; i--){
          j = i-1;
          q1 = quotes.get( i );
          q2 = quotes.get( j );

@@ -8,7 +8,7 @@ public class RSITest {
    @Test
    public void RSI14test() {
       RelativeStrengthIndex rsi = new RelativeStrengthIndex( 14, UtilTest.getQuotes() );
-      Assert.assertEquals( "59.0975561541093412643022020347416400909423828125", rsi.calculate().toString());
+      Assert.assertEquals( "61.11842658704150466064675129018723964691162109375", rsi.calculate().toString());
    }
    
 }

@@ -20,7 +20,15 @@ public class FormulaController {
    private FormulaService formulaService;
    
    @RequestMapping(value= "/ema", method = RequestMethod.GET)
-   public ResponseEntity<BigDecimal> getHistory(@RequestParam("period") int period, @RequestParam("symbol") String symbol ) throws IOException {
+   public ResponseEntity<BigDecimal> ema(@RequestParam("period") int period, @RequestParam("symbol") String symbol ) throws IOException {
       return new ResponseEntity<BigDecimal>( formulaService.getEMA( period, symbol ), HttpStatus.OK );
+   }
+   
+   @RequestMapping(value= "/rsi", method = RequestMethod.GET)
+   public ResponseEntity<BigDecimal> rsi(@RequestParam(value = "period", required=false) Integer period, @RequestParam("symbol") String symbol ) throws IOException {
+      if(period == null){
+         period = 14;
+      }
+      return new ResponseEntity<BigDecimal>( formulaService.getRSI( period, symbol ), HttpStatus.OK );
    }
 }
