@@ -3,6 +3,7 @@ package ar.com.sac.model;
 
 public class Alert {
    
+   private String id;
    private Boolean active;
    private String expression;
    private String name;
@@ -47,6 +48,14 @@ public class Alert {
    
    public synchronized void setSendEmail( Boolean sendEmail ) {
       this.sendEmail = sendEmail;
+   }
+
+   public String getId() {
+      return id;
+   }
+
+   public void setId( String id ) {
+      this.id = id;
    }
    
 

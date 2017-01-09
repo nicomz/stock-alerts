@@ -22,19 +22,41 @@ public class AlertService {
    
    @Autowired
    private StockService stockService;
+   @Autowired
+   private EmailService emailService;
    
-
-   public List<Notification> processAlerts(){
+   public List<Alert> getAlerts(boolean onlyActive){
+      List<Alert> alerts = new ArrayList<Alert>();
       //Create HARDCODED alerts
       Alert alert = new Alert();
+      alert.setId( "MIRGOR BUY SIGNAL" );
       alert.setActive( true );
       alert.setSendEmail( false );
       alert.setName( "Buy signal - MIRG" );
       alert.setDescription( "MIRG has thrown a buy signal." );
-      alert.setExpression( "EMA(5,MIRG.BA)>EMA(100,MIRG.BA)&&RSI(14,MIRG.BA)>50" );
-
+      alert.setExpression( "EMA(5,MIRG.BA)>EMA(20,MIRG.BA)&&RSI(14,MIRG.BA)>50" );
+      alerts.add( alert );
+      
+      return alerts;
+   }
+   
+   public List<Notification> processAlerts() {
       List<Notification> notifications = new ArrayList<Notification>();
-      processAlert(alert, notifications);
+      for(Alert alert : getAlerts( true )){
+         processAlert(alert, notifications);
+      }
+      
+      Alert alert;
+      for(Notification notification: notifications){
+         alert = notification.getAlert();
+         if(!alert.getSendEmail()){
+         }
+         try {
+            emailService.generateAndSendEmail( alert.getName(), alert.getDescription() );
+         } catch (Exception e) {
+            e.printStackTrace();
+         }
+      }
       return notifications;
    }
 
