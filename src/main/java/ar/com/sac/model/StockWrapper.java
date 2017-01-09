@@ -21,5 +21,9 @@ public class StockWrapper implements IStockWrapper {
    public Stock getStock() {
       return stock;
    }
+
+   public Quote getLastQuote() {
+      return new Quote(stock.getQuote());
+   }
    
 }

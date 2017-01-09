@@ -6,4 +6,6 @@ public interface IStockWrapper extends Serializable {
    
    public String getSymbol();
    
+   public Quote getLastQuote();
+   
 }

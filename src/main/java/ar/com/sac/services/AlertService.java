@@ -3,6 +3,7 @@ package ar.com.sac.services;
 import ar.com.sac.model.Alert;
 import ar.com.sac.model.ExponentialMovingAverage;
 import ar.com.sac.model.Notification;
+import ar.com.sac.model.Price;
 import ar.com.sac.model.Quote;
 import ar.com.sac.model.RelativeStrengthIndex;
 import ar.com.sac.model.operations.OperationConstantValue;
@@ -36,6 +37,16 @@ public class AlertService {
       alert.setDescription( "MIRG has thrown a buy signal." );
       alert.setExpression( "EMA(5,MIRG.BA)>EMA(20,MIRG.BA)&&RSI(14,MIRG.BA)>50" );
       alerts.add( alert );
+      //PRICE
+      alert = new Alert();
+      alert.setId( "MIRGOR TARGET SIGNAL" );
+      alert.setActive( true );
+      alert.setSendEmail( false );
+      alert.setName( "PRICE OF MIRGOR TOO HIGH" );
+      alert.setDescription( "MIRG's price is too high." );
+      alert.setExpression( "PRICE(MIRG.BA)>440" );
+      alerts.add( alert );
+      
       
       return alerts;
    }
@@ -123,6 +134,16 @@ public class AlertService {
          }
          RelativeStrengthIndex rsi = new RelativeStrengthIndex( Integer.parseInt( params[0].substring( 4 ) ), quotes );
          result = new OperationFormula( rsi );
+      }else if(expression.startsWith( "PRICE" )){
+         String symbolParam = expression.substring( 6 ).replace( ")","" );
+         Quote quote;
+         try {
+            quote = stockService.getStock( symbolParam ).getLastQuote();
+         } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException( "No quote for symbol: " + symbolParam );
+         }
+         result = new OperationFormula( new Price( quote ) );
       }else{
          result = new OperationConstantValue( Double.parseDouble( expression ) );
       }
