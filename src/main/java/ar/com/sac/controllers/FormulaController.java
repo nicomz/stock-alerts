@@ -31,4 +31,9 @@ public class FormulaController {
       }
       return new ResponseEntity<BigDecimal>( formulaService.getRSI( period, symbol ), HttpStatus.OK );
    }
+   
+   @RequestMapping(value= "/price", method = RequestMethod.GET)
+   public ResponseEntity<BigDecimal> price( @RequestParam("symbol") String symbol ) throws IOException {
+      return new ResponseEntity<BigDecimal>( formulaService.getPrice( symbol ), HttpStatus.OK );
+   }
 }

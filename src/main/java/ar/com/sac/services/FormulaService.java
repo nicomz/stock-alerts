@@ -27,5 +27,10 @@ public class FormulaService {
       RelativeStrengthIndex rsi = new RelativeStrengthIndex( period, quotes );
       return rsi.calculate();
    }
+   
+   public BigDecimal getPrice( String symbol ) throws IOException{
+      Quote quote = stockService.getStock( symbol ).getLastQuote();
+      return quote.getClose();
+   }
 
 }

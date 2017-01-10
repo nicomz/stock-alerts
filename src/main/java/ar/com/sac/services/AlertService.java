@@ -16,9 +16,14 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 @Service
+@EnableScheduling
+@PropertySource("classpath:application.properties") 
 public class AlertService {
    
    @Autowired
@@ -51,6 +56,12 @@ public class AlertService {
       return alerts;
    }
    
+   @Scheduled(cron = "${alerts.process.cron}")
+   public void processAlertsJob(){
+      System.out.println( "Processing Alerts!!!!!!!!! ----------------------------------" );
+      processAlerts();
+   }
+   
    public List<Notification> processAlerts() {
       List<Notification> notifications = new ArrayList<Notification>();
       for(Alert alert : getAlerts( true )){
@@ -61,6 +72,7 @@ public class AlertService {
       for(Notification notification: notifications){
          alert = notification.getAlert();
          if(!alert.getSendEmail()){
+            continue;
          }
          try {
             emailService.generateAndSendEmail( alert.getName(), alert.getDescription() );
@@ -72,7 +84,7 @@ public class AlertService {
    }
 
    private void processAlert( Alert alert, List<Notification> notifications ) {
-      Operator operator = parseExpression( alert.getExpression() );
+      Operator operator = parseExpression( alert.getExpression().replace( " ", "" ).toUpperCase() );
       if(operator.evaluate()){
          Notification notification = new Notification();
          notification.setCreationDate( new Date() );
