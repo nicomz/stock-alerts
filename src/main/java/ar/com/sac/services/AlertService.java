@@ -47,9 +47,18 @@ public class AlertService {
       alert.setId( "MIRGOR TARGET SIGNAL" );
       alert.setActive( true );
       alert.setSendEmail( false );
-      alert.setName( "PRICE OF MIRGOR TOO HIGH" );
-      alert.setDescription( "MIRG's price is too high." );
-      alert.setExpression( "PRICE(MIRG.BA)>440" );
+      alert.setName( "PRICE OF MIRGOR ON TARGET" );
+      alert.setDescription( "MIRG's price is too high. Sell signal." );
+      alert.setExpression( "PRICE(MIRG.BA)>460" );
+      alerts.add( alert );
+      
+      alert = new Alert();
+      alert.setId( "SIDERAR RESISTANCE BROKEN" );
+      alert.setActive( true );
+      alert.setSendEmail( false );
+      alert.setName( "PRICE OF SIDERAR RISING" );
+      alert.setDescription( "ERAR's price has boken a RESISTANCE." );
+      alert.setExpression( "PRICE(ERAR.BA)>10.5" );
       alerts.add( alert );
       
       
@@ -58,7 +67,6 @@ public class AlertService {
    
    @Scheduled(cron = "${alerts.process.cron}")
    public void processAlertsJob(){
-      System.out.println( "Processing Alerts!!!!!!!!! ----------------------------------" );
       processAlerts();
    }
    
