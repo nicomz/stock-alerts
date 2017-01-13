@@ -12,6 +12,7 @@ import ar.com.sac.model.operations.OperationTerm;
 import ar.com.sac.model.operations.Operator;
 import ar.com.sac.model.operations.OperatorAND;
 import ar.com.sac.model.operations.OperatorGREATERThan;
+import ar.com.sac.services.dao.AlertDAO;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -20,10 +21,12 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @EnableScheduling
 @PropertySource("classpath:application.properties") 
+@Transactional
 public class AlertService {
    
    @Autowired
@@ -31,38 +34,12 @@ public class AlertService {
    @Autowired
    private EmailService emailService;
    
+   @Autowired
+   private AlertDAO alertDAO;
+   
+   @Transactional(readOnly = true)
    public List<Alert> getAlerts(boolean onlyActive){
-      List<Alert> alerts = new ArrayList<Alert>();
-      //Create HARDCODED alerts
-      Alert alert = new Alert();
-      alert.setId( "MIRGOR BUY SIGNAL" );
-      alert.setActive( true );
-      alert.setSendEmail( false );
-      alert.setName( "Buy signal - MIRG" );
-      alert.setDescription( "MIRG has thrown a buy signal." );
-      alert.setExpression( "EMA(5,MIRG.BA)>EMA(20,MIRG.BA)&&RSI(14,MIRG.BA)>50" );
-      alerts.add( alert );
-      //PRICE
-      alert = new Alert();
-      alert.setId( "MIRGOR TARGET SIGNAL" );
-      alert.setActive( true );
-      alert.setSendEmail( false );
-      alert.setName( "PRICE OF MIRGOR ON TARGET" );
-      alert.setDescription( "MIRG's price is too high. Sell signal." );
-      alert.setExpression( "PRICE(MIRG.BA)>460" );
-      alerts.add( alert );
-      
-      alert = new Alert();
-      alert.setId( "SIDERAR RESISTANCE BROKEN" );
-      alert.setActive( true );
-      alert.setSendEmail( false );
-      alert.setName( "PRICE OF SIDERAR RISING" );
-      alert.setDescription( "ERAR's price has boken a RESISTANCE." );
-      alert.setExpression( "PRICE(ERAR.BA)>10.5" );
-      alerts.add( alert );
-      
-      
-      return alerts;
+      return alertDAO.getAlerts();
    }
    
    @Scheduled(cron = "${alerts.process.cron}")

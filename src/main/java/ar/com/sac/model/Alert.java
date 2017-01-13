@@ -1,8 +1,12 @@
 package ar.com.sac.model;
 
+import javax.persistence.Entity;
+import javax.persistence.Id;
 
+@Entity
 public class Alert {
    
+   @Id
    private String id;
    private Boolean active;
    private String expression;
