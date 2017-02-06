@@ -152,4 +152,12 @@ public class AlertService {
       alertDAO.persist( newAlert );
    }
 
+   @Transactional
+   public void deleteAlertById( String alertId ) {
+      Alert alertToDelete = alertDAO.findById( alertId );
+      if( alertToDelete != null ){
+         alertDAO.remove( alertToDelete );
+      }
+   }
+
 }
