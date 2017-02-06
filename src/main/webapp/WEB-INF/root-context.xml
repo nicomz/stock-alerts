@@ -13,18 +13,17 @@
     <context:property-placeholder location="classpath:application.properties" />
      
     <context:component-scan  base-package="ar.com.sac" />
-     
-    <tx:annotation-driven proxy-target-class="true" transaction-manager="transactionManager"/>
+    
+    <tx:annotation-driven transaction-manager="transactionManager"/>
      
     <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
         <property name="driverClassName" value="${jdbc.driverClassName}" />
         <property name="url" value="${jdbc.url}"/>
         <property name="username" value="${jdbc.username}" />
         <property name="password" value="${jdbc.password}"/>
-         
     </bean>
     
-    <bean id="myEmf" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean" >
+    <bean id="entityManager" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean" >
         <property name="dataSource" ref="dataSource"/>
         <property name="packagesToScan" value="ar.com.sac.model"/>
         <property name="jpaVendorAdapter">
@@ -41,7 +40,7 @@
     </bean>
  
    <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
-      <property name="entityManagerFactory" ref="myEmf" />
+      <property name="entityManagerFactory" ref="entityManager" />
    </bean>
  
 </beans>

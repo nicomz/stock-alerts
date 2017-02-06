@@ -5,9 +5,13 @@ import java.util.List;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class AlertDAO extends AbstractDAO{
+public class AlertDAO extends AbstractDAO<Alert, String>{
    
-   public List<Alert> getAlerts(){
+   public AlertDAO( ) {
+      super( Alert.class );
+   }
+
+   public List<Alert> getAlerts( boolean onlyActive){
       /*List<Alert> alerts = new ArrayList<Alert>();
       //Create HARDCODED alerts
       Alert alert = new Alert();
@@ -39,10 +43,12 @@ public class AlertDAO extends AbstractDAO{
       
       
       return alerts;*/
-     /* Criteria criteria = getSession().createCriteria(Alert.class);
-      return (List<Alert>) criteria.list();*/
-      List<Alert> employees = getManager().createQuery("Select a From Alert a", Alert.class).getResultList();
-      return employees;
+      String query = "Select a From Alert a";
+      if( onlyActive ){
+         query += " WHERE active is true";
+      }
+      List<Alert> alerts = getEntityManager().createQuery(query, Alert.class).getResultList();
+      return alerts;
    }
 
 }

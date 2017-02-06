@@ -1,41 +1,32 @@
 package ar.com.sac.services.dao;
 
+import java.io.Serializable;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import org.springframework.stereotype.Repository;
 
-public abstract class AbstractDAO {
+@Repository
+public abstract class AbstractDAO<E, PK extends Serializable> {
       @PersistenceContext
-      private EntityManager manager;
-
+      protected EntityManager entityManager;
+      private Class<E> type;
       
-      public synchronized EntityManager getManager() {
-         return manager;
+      public synchronized EntityManager getEntityManager() {
+         return entityManager;
       }
       
-     /* @Autowired
-      private SessionFactory sessionFactory;
-   
-      
-      public synchronized SessionFactory getSessionFactory() {
-         return sessionFactory;
+      public synchronized void setEntityManager( EntityManager entityManager ) {
+         this.entityManager = entityManager;
       }
 
+      public AbstractDAO(Class<E> type){
+         this.type = type;
+      }
       
-      public synchronized void setSessionFactory( SessionFactory sessionFactory ) {
-         this.sessionFactory = sessionFactory;
-      }
+      public void persist(E entity) { entityManager.persist(entity); }
 
-      protected Session getSession() {
-          return sessionFactory.getCurrentSession();
-      }
-   
-      public void persist(Object entity) {
-          getSession().persist(entity);
-      }
-   
-      public void delete(Object entity) {
-          getSession().delete(entity);
-      }
-      */
+      public void remove(E entity) { entityManager.remove(entity); }
 
+      public E findById(PK id) { return entityManager.find(type, id); }
+      
 }

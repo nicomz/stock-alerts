@@ -25,7 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @EnableScheduling
-@PropertySource("classpath:application.properties") 
+@PropertySource("classpath:application.properties")
 @Transactional
 public class AlertService {
    
@@ -39,7 +39,7 @@ public class AlertService {
    
    @Transactional(readOnly = true)
    public List<Alert> getAlerts(boolean onlyActive){
-      return alertDAO.getAlerts();
+      return alertDAO.getAlerts( onlyActive );
    }
    
    @Scheduled(cron = "${alerts.process.cron}")
@@ -145,6 +145,11 @@ public class AlertService {
          result = new OperationConstantValue( Double.parseDouble( expression ) );
       }
       return result;
+   }
+
+   @Transactional
+   public void saveAlert( Alert newAlert ) {
+      alertDAO.persist( newAlert );
    }
 
 }
