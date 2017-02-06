@@ -160,4 +160,9 @@ public class AlertService {
       }
    }
 
+   @Transactional
+   public void updateAlert( Alert alert ) {
+      alertDAO.update( alert );
+   }
+
 }

@@ -35,8 +35,14 @@ public class AlertController {
    }
    
    @RequestMapping(method = RequestMethod.DELETE)
-   public ResponseEntity<HttpStatus> createAlert(  @RequestParam("id") String alertId ) throws IOException {
+   public ResponseEntity<HttpStatus> deleteAlert(  @RequestParam("id") String alertId ) throws IOException {
       alertService.deleteAlertById(  alertId );
+      return new ResponseEntity<HttpStatus> ( HttpStatus.OK );
+   }
+   
+   @RequestMapping(method = RequestMethod.PUT)
+   public ResponseEntity<HttpStatus> updateAlert( @RequestBody Alert alert ) throws IOException {
+      alertService.updateAlert( alert );
       return new ResponseEntity<HttpStatus> ( HttpStatus.OK );
    }
    
