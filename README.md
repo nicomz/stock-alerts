@@ -39,7 +39,14 @@ Configure your financial alerts from your favorite stock market and receive noti
 * GET /stock-alerts/alerts 
   * Retrieves all active and inactive alerts loaded
 * POST /stock-alerts/alerts 
+  * Creates a new Alert
   * Passing a JSON representation of an alert as body
+* PUT /stock-alerts/alerts 
+  * Updates an existing Alert
+  * Passing a JSON representation of an alert as body
+* DELETE /stock-alerts/alerts?id=franBuy1 
+  * Deletes an existing Alert
+  * Passing an alert id by URL parameter
 * GET /stock-alerts/alerts/process 
   * Processes all active alerts immediately
 
