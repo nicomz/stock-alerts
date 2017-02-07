@@ -47,11 +47,15 @@ public class EmailService {
    @Value("${mail.session.user.password}")
    private String password;
    
+   @Value("${mail.smtp.ssl.trust}")
+   private String trust;
+   
    public void generateAndSendEmail(String subject, String body) throws AddressException, MessagingException {
       Properties mailServerProperties = System.getProperties();
       mailServerProperties.put("mail.smtp.port", port);
       mailServerProperties.put("mail.smtp.auth", auth);
       mailServerProperties.put("mail.smtp.starttls.enable", ttls);
+      mailServerProperties.put("mail.smtp.ssl.trust", trust);
  
       // Step2
       Session getMailSession = Session.getDefaultInstance(mailServerProperties, null);
