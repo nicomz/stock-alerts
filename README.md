@@ -12,7 +12,7 @@ Configure your financial alerts from your favorite stock market and receive noti
 
 ## Valid expressions examples
 * PRICE(GOOGL)>318.5
-* PRICE(GOOGL)>318.5&&VOLUME(GOOGL)>130000
+* PRICE(GOOGL)>318.5&&130000<VOLUME(GOOGL)
 * EMA(5,GOOGL)>EMA(20,GOOGL)&&RSI(14,GOOGL)>50
 
 ## Formulas
@@ -24,6 +24,7 @@ Configure your financial alerts from your favorite stock market and receive noti
 ## Operators
 * __&&__: Logical AND operator
 * __>__: GREATER THAN operator
+* __<__: LESS THAN operator
 
 ## API REST
 * GET /stock-alerts/ping 
