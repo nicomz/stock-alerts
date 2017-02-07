@@ -56,7 +56,7 @@ Configure your financial alerts from your favorite stock market and receive noti
 
 ## Alert object structure
 * __id__ = An alert identifier. For example: GOOGLE1
-* __activ__ = true or false. Represents whether this alert is currently vigent or not.
+* __active__ = true or false. Represents whether this alert is currently vigent or not.
 * __description__ = Long description for this alert. This field will be the content of the email notification. For example: "The price of GOOGLE is optimum to buy right now!"
 * __expression__ = Financial expression to be evaluated when this alert will processed
 * __name__ = Short description of the alert. This field will be the subject of the email notification. For example: "GOOGLE buy signal"
