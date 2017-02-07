@@ -11,13 +11,15 @@ Configure your financial alerts from your favorite stock market and receive noti
 * Made in JAVA
 
 ## Valid expressions examples
-* PRICE(GOOGL)>318.5 
+* PRICE(GOOGL)>318.5
+* PRICE(GOOGL)>318.5&&VOLUME(GOOGL)>130000
 * EMA(5,GOOGL)>EMA(20,GOOGL)&&RSI(14,GOOGL)>50
 
 ## Formulas
 * __EMA__: Exponential Moving Average. Parameters: period and symbol.
 * __RSI__: Relative Strength Index. Parameters: period and symbol.
 * __PRICE__: Last price of a single stock. Parameter: symbol.
+* __VOLUME__: Last volume of a single stock. Parameter: symbol.
 
 ## Operators
 * __&&__: Logical AND operator
@@ -36,6 +38,7 @@ Configure your financial alerts from your favorite stock market and receive noti
 * GET /stock-alerts/formulas/rsi?period=14&symbol=GOOGL 
   * period parameter is optional, default value is 14
 * GET /stock-alerts/formulas/price?symbol=GOOGL
+* GET /stock-alerts/formulas/volume?symbol=GOOGL
 * GET /stock-alerts/alerts 
   * Retrieves all active and inactive alerts loaded
 * POST /stock-alerts/alerts 
