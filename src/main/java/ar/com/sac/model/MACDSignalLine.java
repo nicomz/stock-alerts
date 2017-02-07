@@ -32,7 +32,8 @@ public class MACDSignalLine implements Formula {
          macdValue = macd.calculate();
          macdQuote = new Quote();
          macdQuote.setClose( macdValue );
-         macdQuotes.add( macdQuote );
+         //Quotes always must be in descending order
+         macdQuotes.add( 0, macdQuote );
       }
       
       ExponentialMovingAverage ema = new ExponentialMovingAverage( signalPeriod, macdQuotes );
