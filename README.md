@@ -45,7 +45,7 @@ Configure your financial alerts from your favorite stock market and receive noti
 * GET /stock-alerts/formulas/macd?fastPeriod=12&slowPeriod=26&symbol=GOOGL 
   * fastPeriod parameter is optional, default value is 12
   * slowPeriod parameter is optional, default value is 26
-* GET /stock-alerts/formulas/macd?fastPeriod=12&slowPeriod=26&signalPeriod=9&symbol=GOOGL 
+* GET /stock-alerts/formulas/macdsignalline?fastPeriod=12&slowPeriod=26&signalPeriod=9&symbol=GOOGL 
   * fastPeriod parameter is optional, default value is 12
   * slowPeriod parameter is optional, default value is 26
   * signalPeriod parameter is optional, default value is 9
