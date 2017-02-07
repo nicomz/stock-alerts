@@ -85,11 +85,11 @@ public class AlertService {
       String[] andSplit = expression.split( "&&" );
       Operator result;
       if(andSplit.length == 1){
-         result = processMonoterm( expression );
+         result = processANDTerm( expression );
       }else{
          OperatorAND and = new OperatorAND();
          for(int i = 0 ; i < andSplit.length; i++){
-            and.addTerm( processMonoterm( andSplit[i] ) );
+            and.addTerm( processANDTerm( andSplit[i] ) );
          }
          result = and;
       }
@@ -97,7 +97,7 @@ public class AlertService {
       return result;
    }
 
-   private Operator processMonoterm( String expression ) {
+   private Operator processANDTerm( String expression ) {
       Operator operator;
       if(expression.contains( ">" )){
          String[] greaterSplit = expression.split( ">" );
