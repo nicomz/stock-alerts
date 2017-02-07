@@ -6,6 +6,7 @@ import ar.com.sac.model.Notification;
 import ar.com.sac.model.Price;
 import ar.com.sac.model.Quote;
 import ar.com.sac.model.RelativeStrengthIndex;
+import ar.com.sac.model.Volume;
 import ar.com.sac.model.operations.OperationConstantValue;
 import ar.com.sac.model.operations.OperationFormula;
 import ar.com.sac.model.operations.OperationTerm;
@@ -141,6 +142,16 @@ public class AlertService {
             throw new RuntimeException( "No quote for symbol: " + symbolParam );
          }
          result = new OperationFormula( new Price( quote ) );
+      }else if(expression.startsWith( "VOLUME" )){
+         String symbolParam = expression.substring( 7 ).replace( ")","" );
+         Quote quote;
+         try {
+            quote = stockService.getStock( symbolParam ).getLastQuote();
+         } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException( "No quote for symbol: " + symbolParam );
+         }
+         result = new OperationFormula( new Volume( quote ) );
       }else{
          result = new OperationConstantValue( Double.parseDouble( expression ) );
       }

@@ -1,8 +1,10 @@
 package ar.com.sac.services;
 
 import ar.com.sac.model.ExponentialMovingAverage;
+import ar.com.sac.model.Price;
 import ar.com.sac.model.Quote;
 import ar.com.sac.model.RelativeStrengthIndex;
+import ar.com.sac.model.Volume;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.List;
@@ -30,7 +32,12 @@ public class FormulaService {
    
    public BigDecimal getPrice( String symbol ) throws IOException{
       Quote quote = stockService.getStock( symbol ).getLastQuote();
-      return quote.getClose();
+      return new Price( quote ).calculate();
+   }
+   
+   public BigDecimal getVolume( String symbol ) throws IOException{
+      Quote quote = stockService.getStock( symbol ).getLastQuote();
+      return new Volume( quote ).calculate();
    }
 
 }

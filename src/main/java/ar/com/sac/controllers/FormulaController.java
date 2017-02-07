@@ -36,4 +36,9 @@ public class FormulaController {
    public ResponseEntity<BigDecimal> price( @RequestParam("symbol") String symbol ) throws IOException {
       return new ResponseEntity<BigDecimal>( formulaService.getPrice( symbol ), HttpStatus.OK );
    }
+   
+   @RequestMapping(value= "/volume", method = RequestMethod.GET)
+   public ResponseEntity<BigDecimal> volume( @RequestParam("symbol") String symbol ) throws IOException {
+      return new ResponseEntity<BigDecimal>( formulaService.getVolume( symbol ), HttpStatus.OK );
+   }
 }
