@@ -13,6 +13,7 @@ import ar.com.sac.model.operations.OperationTerm;
 import ar.com.sac.model.operations.Operator;
 import ar.com.sac.model.operations.OperatorAND;
 import ar.com.sac.model.operations.OperatorGREATERThan;
+import ar.com.sac.model.operations.OperatorLESSThan;
 import ar.com.sac.services.dao.AlertDAO;
 import java.util.ArrayList;
 import java.util.Date;
@@ -45,6 +46,7 @@ public class AlertService {
    
    @Scheduled(cron = "${alerts.process.cron}")
    public void processAlertsJob(){
+      System.out.println( "Processing Alerts JOB: " + new Date() );
       processAlerts();
    }
    
@@ -83,12 +85,11 @@ public class AlertService {
       String[] andSplit = expression.split( "&&" );
       Operator result;
       if(andSplit.length == 1){
-         OperatorGREATERThan greater = processAND( expression );
-         result = greater;
+         result = processMonoterm( expression );
       }else{
          OperatorAND and = new OperatorAND();
          for(int i = 0 ; i < andSplit.length; i++){
-            and.addTerm( processAND( andSplit[i] ) );
+            and.addTerm( processMonoterm( andSplit[i] ) );
          }
          result = and;
       }
@@ -96,16 +97,26 @@ public class AlertService {
       return result;
    }
 
-   private OperatorGREATERThan processAND( String expression ) {
-      String[] greaterSplit = expression.split( ">" );
-      if(greaterSplit.length == 1){
+   private Operator processMonoterm( String expression ) {
+      Operator operator;
+      if(expression.contains( ">" )){
+         String[] greaterSplit = expression.split( ">" );
+         OperatorGREATERThan greater = new OperatorGREATERThan();
+         for(int i = 0 ; i < greaterSplit.length; i++){
+            greater.addOperationTerm( processOperationTerm( greaterSplit[i] ) );
+         }
+         operator = greater;
+      }else if(expression.contains( "<" )){
+         String[] lessSplit = expression.split( "<" );
+         OperatorLESSThan less = new OperatorLESSThan();
+         for(int i = 0 ; i < lessSplit.length; i++){
+            less.addOperationTerm( processOperationTerm( lessSplit[i] ) );
+         }
+         operator = less;
+      }else{
          throw new RuntimeException( "Invalid Expression: " + expression );
       }
-      OperatorGREATERThan greater = new OperatorGREATERThan();
-      for(int i = 0 ; i < greaterSplit.length; i++){
-         greater.addOperationTerm( processOperationTerm( greaterSplit[i] ) );
-      }
-      return greater;
+      return operator;
    }
 
    private OperationTerm processOperationTerm( String expression ) {

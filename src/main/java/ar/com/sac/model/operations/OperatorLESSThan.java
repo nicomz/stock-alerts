@@ -3,7 +3,7 @@ package ar.com.sac.model.operations;
 import java.util.ArrayList;
 import java.util.List;
 
-public class OperatorGREATERThan implements Operator {
+public class OperatorLESSThan implements Operator {
    private List<OperationTerm> terms = new ArrayList<OperationTerm>();
    
    public void addOperationTerm(OperationTerm term){
@@ -13,13 +13,12 @@ public class OperatorGREATERThan implements Operator {
    public boolean evaluate() {
       boolean result = true;
       for( int i = 0 ; i < terms.size() -1 ; i++ ){
-         if(!( terms.get( i ).getValue() > terms.get( i+1 ).getValue() )){
+         if(!( terms.get( i ).getValue() < terms.get( i+1 ).getValue() )){
             result = false;
             break;
          }
       }
       return result;
    }
-
 
 }
