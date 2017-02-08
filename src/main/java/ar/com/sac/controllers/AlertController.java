@@ -60,8 +60,8 @@ public class AlertController {
       return new ResponseEntity<HttpStatus> ( HttpStatus.OK );
    }
    
-   @RequestMapping(method = RequestMethod.DELETE)
-   public ResponseEntity<HttpStatus> deleteAlert(  @PathVariable("id") String alertId ) throws IOException {
+   @RequestMapping(value="/{alertId}", method = RequestMethod.DELETE)
+   public ResponseEntity<HttpStatus> deleteAlert(  @PathVariable("alertId") String alertId ) throws IOException {
       alertService.deleteAlertById(  alertId );
       return new ResponseEntity<HttpStatus> ( HttpStatus.OK );
    }
