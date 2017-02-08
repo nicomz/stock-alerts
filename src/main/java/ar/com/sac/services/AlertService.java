@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -41,6 +42,9 @@ public class AlertService {
    @Autowired
    private AlertDAO alertDAO;
    
+   @Value("${alerts.application.host}")
+   private String host;
+   
    @Transactional(readOnly = true)
    public List<Alert> getAlerts(boolean onlyActive){
       return alertDAO.getAlerts( onlyActive );
@@ -53,8 +57,12 @@ public class AlertService {
    }
    
    public List<Notification> processAlerts() {
+      return processAlerts( getAlerts( true ));
+   }
+   
+   public List<Notification> processAlerts( List<Alert> alerts ){
       List<Notification> notifications = new ArrayList<Notification>();
-      for(Alert alert : getAlerts( true )){
+      for(Alert alert : alerts){
          processAlert(alert, notifications);
       }
       
@@ -65,7 +73,7 @@ public class AlertService {
             continue;
          }
          try {
-            emailService.generateAndSendEmail( getSubject(alert), getBody(alert) );
+            emailService.generateAndSendEmail( getEmailSubject(alert), getEmailBody(alert) );
          } catch (Exception e) {
             e.printStackTrace();
          }
@@ -73,19 +81,29 @@ public class AlertService {
       return notifications;
    }
    
-   private String getSubject( Alert alert ){
+   private String getEmailSubject( Alert alert ){
       return "(Stock Alert) " + alert.getName();
    }
    
-   private String getBody( Alert alert ){
+   private String getEmailBody( Alert alert ){
       StringBuilder sb = new StringBuilder();
       sb.append( alert.getDescription() );
       sb.append( "<BR>" );
       sb.append( "Expression: " + alert.getExpression() );
       sb.append( "<BR>" );
+      sb.append( "<a href=\"" + generateLink(alert.getId()) +  "/deactivate\" target=\"_blank\">Deactivate this alert</a>" );
       return sb.toString();
    }
+   
 
+   private String generateLink( String alertId ) {
+      String link = host;
+      if(!link.endsWith( "/" )){
+         link += "/";
+      }
+      link += "alerts/";
+      return link + alertId ;
+   }
 
    private void processAlert( Alert alert, List<Notification> notifications ) {
       Operator operator = parseExpression( alert.getExpression().replace( " ", "" ).toUpperCase() );
@@ -222,6 +240,30 @@ public class AlertService {
 
    @Transactional
    public void updateAlert( Alert alert ) {
+      alertDAO.update( alert );
+   }
+
+   @Transactional( readOnly = true )
+   public Alert getAlertById( String alertId ) {
+      return alertDAO.findById( alertId );
+   }
+   
+   @Transactional
+   public void activateAlert( String alertId ) {
+      changeActive(alertId, true);
+   }
+   
+   @Transactional
+   public void deactivateAlert( String alertId ) {
+      changeActive(alertId, false);
+   }
+
+   private void changeActive( String alertId, boolean value ) {
+      Alert alert = getAlertById( alertId );
+      if(alert == null){
+         return;
+      }
+      alert.setActive( value );
       alertDAO.update( alert );
    }
 
