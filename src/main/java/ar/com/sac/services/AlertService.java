@@ -3,6 +3,7 @@ package ar.com.sac.services;
 import ar.com.sac.model.Alert;
 import ar.com.sac.model.ExponentialMovingAverage;
 import ar.com.sac.model.MACD;
+import ar.com.sac.model.MACDHistogram;
 import ar.com.sac.model.MACDSignalLine;
 import ar.com.sac.model.Notification;
 import ar.com.sac.model.Price;
@@ -215,6 +216,17 @@ public class AlertService {
          }
          MACDSignalLine macdSignal = new MACDSignalLine( Integer.parseInt( params[0].substring( 17 ) ), Integer.parseInt( params[1] ), Integer.parseInt( params[2] ), quotes );
          result = new OperationFormula( macdSignal );
+      }else if(expression.startsWith( "MACD_HISTOGRAM" )){
+         String[] params = expression.split( "," );
+         List<Quote> quotes;
+         try {
+            quotes = stockService.getHistory( params[3].replace( ")","" ) );
+         } catch (Exception e) {
+            quotes = new ArrayList<Quote>();
+            e.printStackTrace();
+         }
+         MACDHistogram macdHistogram = new MACDHistogram( Integer.parseInt( params[0].substring( 15 ) ), Integer.parseInt( params[1] ), Integer.parseInt( params[2] ), quotes );
+         result = new OperationFormula( macdHistogram );
       }else if(expression.startsWith( "MACD" )){
          String[] params = expression.split( "," );
          List<Quote> quotes;

@@ -63,6 +63,24 @@ public class FormulaController {
       return new ResponseEntity<BigDecimal>( formulaService.getMACDSignalLine( fastPeriod, slowPeriod, signalPeriod, symbol ), HttpStatus.OK );
    }
    
+   @RequestMapping(value= "/macdhistogram", method = RequestMethod.GET)
+   public ResponseEntity<BigDecimal> macdHistogram(@RequestParam(value = "fastPeriod", required=false) Integer fastPeriod, 
+                                          @RequestParam(value = "slowPeriod", required=false) Integer slowPeriod,
+                                          @RequestParam(value = "signalPeriod", required=false) Integer signalPeriod,
+                                          @RequestParam("symbol") String symbol ) throws IOException {
+      if(fastPeriod == null){
+         fastPeriod = 12;
+      }
+      if(slowPeriod == null){
+         slowPeriod = 26;
+      }
+      if(signalPeriod == null){
+         signalPeriod = 9;
+      }
+      
+      return new ResponseEntity<BigDecimal>( formulaService.getMACDHistogram( fastPeriod, slowPeriod, signalPeriod, symbol ), HttpStatus.OK );
+   }
+   
    @RequestMapping(value= "/price", method = RequestMethod.GET)
    public ResponseEntity<BigDecimal> price( @RequestParam("symbol") String symbol ) throws IOException {
       return new ResponseEntity<BigDecimal>( formulaService.getPrice( symbol ), HttpStatus.OK );

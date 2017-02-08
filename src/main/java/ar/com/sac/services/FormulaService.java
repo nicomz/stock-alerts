@@ -2,6 +2,7 @@ package ar.com.sac.services;
 
 import ar.com.sac.model.ExponentialMovingAverage;
 import ar.com.sac.model.MACD;
+import ar.com.sac.model.MACDHistogram;
 import ar.com.sac.model.MACDSignalLine;
 import ar.com.sac.model.Price;
 import ar.com.sac.model.Quote;
@@ -51,6 +52,12 @@ public class FormulaService {
       List<Quote> quotes = stockService.getHistory( symbol );
       MACDSignalLine macdSignalLine = new MACDSignalLine( fastPeriod, slowPeriod, signalPeriod, quotes );
       return macdSignalLine.calculate();
+   }
+   
+   public BigDecimal getMACDHistogram(int fastPeriod, int slowPeriod, int signalPeriod, String symbol) throws IOException{
+      List<Quote> quotes = stockService.getHistory( symbol );
+      MACDHistogram macdHistogram = new MACDHistogram( fastPeriod, slowPeriod, signalPeriod, quotes );
+      return macdHistogram.calculate();
    }
    
 
