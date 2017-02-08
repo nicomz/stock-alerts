@@ -77,7 +77,7 @@ Configure your financial alerts from your favorite stock market and receive noti
   * Deletes an existing Alert
   * Passing an alert id by URL parameter
 * GET /stock-alerts/alerts/{alertId}/process 
-  * Processes a particular alerts immediately
+  * Processes a particular alert immediately
 * GET /stock-alerts/alerts/process 
   * Processes all active alerts immediately
 
