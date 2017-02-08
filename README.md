@@ -15,6 +15,7 @@ Configure your financial alerts from your favorite stock market and receive noti
 * PRICE(GOOGL)>318.5&&130000<VOLUME(GOOGL)
 * EMA(5,GOOGL)>EMA(20,GOOGL)&&RSI(14,GOOGL)>50
 * MACD(12,26,MIRG.BA)<MACD_SIGNAL_LINE(12,26,9,MIRG.BA)
+* MACD_HISTOGRAM(12,26,9,GOOGL)>0
 
 ## Formulas
 * __EMA__: Exponential Moving Average. Parameters: period and symbol.
@@ -22,7 +23,8 @@ Configure your financial alerts from your favorite stock market and receive noti
 * __PRICE__: Last price of a single stock. Parameter: symbol.
 * __VOLUME__: Last volume of a single stock. Parameter: symbol.
 * __MACD__: Moving Average Convergence/Divergence. Parameters: fastPeriod, slowPeriod and symbol.
-* __MACD_SIGNAL_LINE__: Signal Line of Moving Average Convergence/Divergence. Parameters: fastPeriod, slowPeriod, signalPeriod and symbol.
+* __MACD_SIGNAL_LINE__: Signal Line value of Moving Average Convergence/Divergence. Parameters: fastPeriod, slowPeriod, signalPeriod and symbol.
+* __MACD_HISTOGRAM__: Histogram value of Moving Average Convergence/Divergence. Parameters: fastPeriod, slowPeriod, signalPeriod and symbol.
 
 
 ## Operators
@@ -46,6 +48,10 @@ Configure your financial alerts from your favorite stock market and receive noti
   * fastPeriod parameter is optional, default value is 12
   * slowPeriod parameter is optional, default value is 26
 * GET /stock-alerts/formulas/macdsignalline?fastPeriod=12&slowPeriod=26&signalPeriod=9&symbol=GOOGL 
+  * fastPeriod parameter is optional, default value is 12
+  * slowPeriod parameter is optional, default value is 26
+  * signalPeriod parameter is optional, default value is 9
+* GET /stock-alerts/formulas/macdhistogram?fastPeriod=12&slowPeriod=26&signalPeriod=9&symbol=GOOGL 
   * fastPeriod parameter is optional, default value is 12
   * slowPeriod parameter is optional, default value is 26
   * signalPeriod parameter is optional, default value is 9
