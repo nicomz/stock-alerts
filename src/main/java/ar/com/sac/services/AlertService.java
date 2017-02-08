@@ -65,13 +65,27 @@ public class AlertService {
             continue;
          }
          try {
-            emailService.generateAndSendEmail( alert.getName(), alert.getDescription() );
+            emailService.generateAndSendEmail( getSubject(alert), getBody(alert) );
          } catch (Exception e) {
             e.printStackTrace();
          }
       }
       return notifications;
    }
+   
+   private String getSubject( Alert alert ){
+      return "(Stock Alert) " + alert.getName();
+   }
+   
+   private String getBody( Alert alert ){
+      StringBuilder sb = new StringBuilder();
+      sb.append( alert.getDescription() );
+      sb.append( "<BR>" );
+      sb.append( "Expression: " + alert.getExpression() );
+      sb.append( "<BR>" );
+      return sb.toString();
+   }
+
 
    private void processAlert( Alert alert, List<Notification> notifications ) {
       Operator operator = parseExpression( alert.getExpression().replace( " ", "" ).toUpperCase() );
