@@ -90,8 +90,15 @@ public class AlertService {
       sb.append( alert.getDescription() );
       sb.append( "<BR>" );
       sb.append( "Expression: " + alert.getExpression() );
-      sb.append( "<BR>" );
+      sb.append( "<BR><BR>" );
       sb.append( "<a href=\"" + generateLink(alert.getId()) +  "/deactivate\" target=\"_blank\">Deactivate this alert</a>" );
+      sb.append( "<BR>" );
+      if(alert.getOpposedAlertId() != null){
+         sb.append( "<a href=\"" + generateLink(alert.getOpposedAlertId()) +  "/activate\" target=\"_blank\">Activate opposed alert " + alert.getOpposedAlertId() + "</a>" );
+         sb.append( "<BR>" );
+      }
+      sb.append( "<BR>" );
+      sb.append( "<i>Stock Alerts</i><br><b>Sergio A. Cormio</b>" );
       return sb.toString();
    }
    
@@ -265,6 +272,10 @@ public class AlertService {
       }
       alert.setActive( value );
       alertDAO.update( alert );
+   }
+
+   public List<Alert> getAlertsBySymbol( String symbol ) {
+      return alertDAO.getAlertsBySymbol(symbol);
    }
 
 }

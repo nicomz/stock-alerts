@@ -13,7 +13,29 @@ public class Alert {
    private String name;
    private String description;
    private Boolean sendEmail;
+   private String symbol;
+   private String opposedAlertId;
    
+   
+   public synchronized String getSymbol() {
+      return symbol;
+   }
+
+   
+   public synchronized void setSymbol( String symbol ) {
+      this.symbol = symbol;
+   }
+
+   
+   public synchronized String getOpposedAlertId() {
+      return opposedAlertId;
+   }
+
+   
+   public synchronized void setOpposedAlertId( String opposedAlertId ) {
+      this.opposedAlertId = opposedAlertId;
+   }
+
    public synchronized Boolean getActive() {
       return active;
    }
