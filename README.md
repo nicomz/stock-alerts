@@ -33,14 +33,19 @@ Configure your financial alerts from your favorite stock market and receive noti
 * __<__: LESS THAN operator
 
 ## API REST
+#### System test
 * GET /stock-alerts/ping 
   * Useful to test server is up
 * GET /stock-alerts/emails/test
   * Sends a test email, useful to test email configuration
+
+#### Stocks
 * GET /stock-alerts/stocks?symbol=GOOGL
   * Returns stock information
 * GET /stock-alerts/stocks/history?symbol=GOOGL
   * Returns historical stock information
+
+#### Formulas
 * GET /stock-alerts/formulas/ema?period=14&symbol=GOOGL
 * GET /stock-alerts/formulas/rsi?period=14&symbol=GOOGL 
   * period parameter is optional, default value is 14
@@ -57,6 +62,8 @@ Configure your financial alerts from your favorite stock market and receive noti
   * signalPeriod parameter is optional, default value is 9
 * GET /stock-alerts/formulas/price?symbol=GOOGL
 * GET /stock-alerts/formulas/volume?symbol=GOOGL
+
+#### Alerts
 * GET /stock-alerts/alerts
   * Retrieves all active and inactive alerts loaded
 * GET /stock-alerts/alerts?symbol=GOOGL
