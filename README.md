@@ -15,6 +15,7 @@ Configure your financial alerts from your favorite stock market and receive noti
 * PRICE(GOOGL)>318.5&&130000<VOLUME(GOOGL)
 * EMA(5,GOOGL)>EMA(20,GOOGL)&&RSI(14,GOOGL)>50
 * MACD(12,26,MIRG.BA)<MACD_SIGNAL_LINE(12,26,9,MIRG.BA)
+* MACD_HISTOGRAM(12,26,9,GOOGL)>0
 
 ## Formulas
 * __EMA__: Exponential Moving Average. Parameters: period and symbol.
@@ -22,7 +23,8 @@ Configure your financial alerts from your favorite stock market and receive noti
 * __PRICE__: Last price of a single stock. Parameter: symbol.
 * __VOLUME__: Last volume of a single stock. Parameter: symbol.
 * __MACD__: Moving Average Convergence/Divergence. Parameters: fastPeriod, slowPeriod and symbol.
-* __MACD_SIGNAL_LINE__: Signal Line of Moving Average Convergence/Divergence. Parameters: fastPeriod, slowPeriod, signalPeriod and symbol.
+* __MACD_SIGNAL_LINE__: Signal Line value of Moving Average Convergence/Divergence. Parameters: fastPeriod, slowPeriod, signalPeriod and symbol.
+* __MACD_HISTOGRAM__: Histogram value of Moving Average Convergence/Divergence. Parameters: fastPeriod, slowPeriod, signalPeriod and symbol.
 
 
 ## Operators
@@ -31,14 +33,19 @@ Configure your financial alerts from your favorite stock market and receive noti
 * __<__: LESS THAN operator
 
 ## API REST
+#### System test
 * GET /stock-alerts/ping 
   * Useful to test server is up
 * GET /stock-alerts/emails/test
   * Sends a test email, useful to test email configuration
+
+#### Stocks
 * GET /stock-alerts/stocks?symbol=GOOGL
   * Returns stock information
 * GET /stock-alerts/stocks/history?symbol=GOOGL
   * Returns historical stock information
+
+#### Formulas
 * GET /stock-alerts/formulas/ema?period=14&symbol=GOOGL
 * GET /stock-alerts/formulas/rsi?period=14&symbol=GOOGL 
   * period parameter is optional, default value is 14
@@ -49,8 +56,14 @@ Configure your financial alerts from your favorite stock market and receive noti
   * fastPeriod parameter is optional, default value is 12
   * slowPeriod parameter is optional, default value is 26
   * signalPeriod parameter is optional, default value is 9
+* GET /stock-alerts/formulas/macdhistogram?fastPeriod=12&slowPeriod=26&signalPeriod=9&symbol=GOOGL 
+  * fastPeriod parameter is optional, default value is 12
+  * slowPeriod parameter is optional, default value is 26
+  * signalPeriod parameter is optional, default value is 9
 * GET /stock-alerts/formulas/price?symbol=GOOGL
 * GET /stock-alerts/formulas/volume?symbol=GOOGL
+
+#### Alerts
 * GET /stock-alerts/alerts
   * Retrieves all active and inactive alerts loaded
 * GET /stock-alerts/alerts?symbol=GOOGL
@@ -71,7 +84,7 @@ Configure your financial alerts from your favorite stock market and receive noti
   * Deletes an existing Alert
   * Passing an alert id by URL parameter
 * GET /stock-alerts/alerts/{alertId}/process 
-  * Processes a particular alerts immediately
+  * Processes a particular alert immediately
 * GET /stock-alerts/alerts/process 
   * Processes all active alerts immediately
 
