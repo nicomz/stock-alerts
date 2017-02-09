@@ -17,6 +17,7 @@ public class AlertDAO extends AbstractDAO<Alert, String>{
       if( onlyActive ){
          query += " WHERE active is true";
       }
+      query += " ORDER BY a.symbol";
       return getEntityManager().createQuery(query, Alert.class).getResultList();
    }
 

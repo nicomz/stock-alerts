@@ -41,16 +41,16 @@ public class AlertController {
    
    //Using GET for be able to create a link to this action 
    @RequestMapping(value="/{alertId}/activate", method = RequestMethod.GET)
-   public ResponseEntity<HttpStatus> activateAlert( @PathVariable("alertId") String alertId) throws IOException {
+   public Alert activateAlert( @PathVariable("alertId") String alertId) throws IOException {
       alertService.activateAlert( alertId );
-      return new ResponseEntity<HttpStatus> ( HttpStatus.OK );
+      return alertService.getAlertById( alertId );
    }
    
    //This action is by GET for be able to create a link to this action
    @RequestMapping(value="/{alertId}/deactivate", method = RequestMethod.GET)
-   public ResponseEntity<HttpStatus> deactivateAlert( @PathVariable("alertId") String alertId) throws IOException {
+   public Alert deactivateAlert( @PathVariable("alertId") String alertId) throws IOException {
       alertService.deactivateAlert( alertId );
-      return new ResponseEntity<HttpStatus> ( HttpStatus.OK );
+      return alertService.getAlertById( alertId );
    }
    
    

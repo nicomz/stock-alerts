@@ -94,7 +94,7 @@ public class AlertService {
       sb.append( "<BR><BR>" );
       sb.append( "<a href=\"" + generateLink(alert.getId()) +  "/deactivate\" target=\"_blank\">Deactivate this alert</a>" );
       sb.append( "<BR>" );
-      if(alert.getOpposedAlertId() != null){
+      if(alert.getOpposedAlertId() != null && !alert.getOpposedAlertId().isEmpty()){
          sb.append( "<a href=\"" + generateLink(alert.getOpposedAlertId()) +  "/activate\" target=\"_blank\">Activate opposed alert " + alert.getOpposedAlertId() + "</a>" );
          sb.append( "<BR>" );
       }
