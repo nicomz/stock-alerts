@@ -9,6 +9,7 @@ import ar.com.sac.model.Notification;
 import ar.com.sac.model.Price;
 import ar.com.sac.model.Quote;
 import ar.com.sac.model.RelativeStrengthIndex;
+import ar.com.sac.model.SimpleMovingAverage;
 import ar.com.sac.model.Volume;
 import ar.com.sac.model.operations.OperationConstantValue;
 import ar.com.sac.model.operations.OperationFormula;
@@ -174,6 +175,17 @@ public class AlertService {
          }
          ExponentialMovingAverage ema = new ExponentialMovingAverage( Integer.parseInt( params[0].substring( 4 ) ), quotes );
          result = new OperationFormula( ema );
+      }else if(expression.startsWith( "SMA" )){
+         String[] params = expression.split( "," );
+         List<Quote> quotes;
+         try {
+            quotes = stockService.getHistory( params[1].replace( ")","" ) );
+         } catch (Exception e) {
+            quotes = new ArrayList<Quote>();
+            e.printStackTrace();
+         }
+         SimpleMovingAverage sma = new SimpleMovingAverage( Integer.parseInt( params[0].substring( 4 ) ), quotes );
+         result = new OperationFormula( sma );
       }else if(expression.startsWith( "RSI" )){
          String[] params = expression.split( "," );
          List<Quote> quotes;

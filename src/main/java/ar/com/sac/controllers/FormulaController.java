@@ -19,6 +19,11 @@ public class FormulaController {
    @Autowired
    private FormulaService formulaService;
    
+   @RequestMapping(value= "/sma", method = RequestMethod.GET)
+   public ResponseEntity<BigDecimal> sma(@RequestParam("period") int period, @RequestParam("symbol") String symbol ) throws IOException {
+      return new ResponseEntity<BigDecimal>( formulaService.getSMA( period, symbol ), HttpStatus.OK );
+   }
+   
    @RequestMapping(value= "/ema", method = RequestMethod.GET)
    public ResponseEntity<BigDecimal> ema(@RequestParam("period") int period, @RequestParam("symbol") String symbol ) throws IOException {
       return new ResponseEntity<BigDecimal>( formulaService.getEMA( period, symbol ), HttpStatus.OK );

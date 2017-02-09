@@ -7,6 +7,7 @@ import ar.com.sac.model.MACDSignalLine;
 import ar.com.sac.model.Price;
 import ar.com.sac.model.Quote;
 import ar.com.sac.model.RelativeStrengthIndex;
+import ar.com.sac.model.SimpleMovingAverage;
 import ar.com.sac.model.Volume;
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -18,6 +19,13 @@ import org.springframework.stereotype.Service;
 public class FormulaService {
    @Autowired
    private StockService stockService;
+   
+   public BigDecimal getSMA(int period, String symbol) throws IOException{
+      List<Quote> quotes;
+      quotes = stockService.getHistory( symbol );
+      SimpleMovingAverage sma = new SimpleMovingAverage( period, quotes );
+      return sma.calculate();
+   }
    
    public BigDecimal getEMA(int period, String symbol) throws IOException{
       List<Quote> quotes;

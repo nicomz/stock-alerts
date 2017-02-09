@@ -53,7 +53,6 @@ public class AlertController {
       return alertService.getAlertById( alertId );
    }
    
-   
    @RequestMapping(method = RequestMethod.POST)
    public ResponseEntity<HttpStatus> createAlert( @RequestBody Alert newAlert ) throws IOException {
       alertService.saveAlert( newAlert );
