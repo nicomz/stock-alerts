@@ -12,12 +12,14 @@ Configure your financial alerts from your favorite stock market and receive noti
 
 ## Valid expressions examples
 * PRICE(GOOGL)>318.5
+* SMA(50,GOOGL)>310
 * PRICE(GOOGL)>318.5&&130000<VOLUME(GOOGL)
 * EMA(5,GOOGL)>EMA(20,GOOGL)&&RSI(14,GOOGL)>50
 * MACD(12,26,MIRG.BA)<MACD_SIGNAL_LINE(12,26,9,MIRG.BA)
 * MACD_HISTOGRAM(12,26,9,GOOGL)>0
 
 ## Formulas
+* __SMA__: Simple Moving Average. Parameters: period and symbol.
 * __EMA__: Exponential Moving Average. Parameters: period and symbol.
 * __RSI__: Relative Strength Index. Parameters: period and symbol.
 * __PRICE__: Last price of a single stock. Parameter: symbol.
@@ -46,6 +48,7 @@ Configure your financial alerts from your favorite stock market and receive noti
   * Returns historical stock information
 
 #### Formulas
+* GET /stock-alerts/formulas/sma?period=50&symbol=GOOGL
 * GET /stock-alerts/formulas/ema?period=14&symbol=GOOGL
 * GET /stock-alerts/formulas/rsi?period=14&symbol=GOOGL 
   * period parameter is optional, default value is 14
