@@ -8,6 +8,8 @@ import ar.com.sac.model.Price;
 import ar.com.sac.model.Quote;
 import ar.com.sac.model.RelativeStrengthIndex;
 import ar.com.sac.model.SimpleMovingAverage;
+import ar.com.sac.model.StochasticOscillatorD;
+import ar.com.sac.model.StochasticOscillatorK;
 import ar.com.sac.model.Volume;
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -66,6 +68,18 @@ public class FormulaService {
       List<Quote> quotes = stockService.getHistory( symbol );
       MACDHistogram macdHistogram = new MACDHistogram( fastPeriod, slowPeriod, signalPeriod, quotes );
       return macdHistogram.calculate();
+   }
+   
+   public BigDecimal getStochasticOscillatorD(int length, int period, String symbol) throws IOException{
+      List<Quote> quotes = stockService.getHistory( symbol );
+      StochasticOscillatorD osd = new StochasticOscillatorD( length, period, quotes );
+      return osd.calculate();
+   }
+   
+   public BigDecimal getStochasticOscillatorK(int length, String symbol) throws IOException{
+      List<Quote> quotes = stockService.getHistory( symbol );
+      StochasticOscillatorK osk = new StochasticOscillatorK( length, quotes );
+      return osk.calculate();
    }
    
 

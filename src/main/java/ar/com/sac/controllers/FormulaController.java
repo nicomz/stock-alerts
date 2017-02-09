@@ -95,4 +95,28 @@ public class FormulaController {
    public ResponseEntity<BigDecimal> volume( @RequestParam("symbol") String symbol ) throws IOException {
       return new ResponseEntity<BigDecimal>( formulaService.getVolume( symbol ), HttpStatus.OK );
    }
+   
+   @RequestMapping(value= "/stochasticd", method = RequestMethod.GET)
+   public ResponseEntity<BigDecimal> stochasticD(@RequestParam(value = "length", required=false) Integer length, 
+                                          @RequestParam(value = "period", required=false) Integer period,
+                                          @RequestParam("symbol") String symbol ) throws IOException {
+      if(length == null){
+         length = 14;
+      }
+      if(period == null){
+         period = 3;
+      }
+      
+      return new ResponseEntity<BigDecimal>( formulaService.getStochasticOscillatorD( length, period, symbol ), HttpStatus.OK );
+   }
+   
+   @RequestMapping(value= "/stochastick", method = RequestMethod.GET)
+   public ResponseEntity<BigDecimal> stochasticD(@RequestParam(value = "length", required=false) Integer length, 
+                                          @RequestParam("symbol") String symbol ) throws IOException {
+      if(length == null){
+         length = 14;
+      }
+      
+      return new ResponseEntity<BigDecimal>( formulaService.getStochasticOscillatorK( length, symbol ), HttpStatus.OK );
+   }
 }
