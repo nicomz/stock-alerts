@@ -102,6 +102,8 @@ public class AlertService {
          sb.append( "<BR>" );
       }
       sb.append( "<BR>" );
+      sb.append( "<a href=\"http://finance.yahoo.com/chart/" + alert.getSymbol() + "\" target=\"_blank\">See the chart on Yahoo Finance</a>" );
+      sb.append( "<BR>" );
       sb.append( "<i>Stock Alerts</i><br><b>Sergio A. Cormio</b>" );
       return sb.toString();
    }
