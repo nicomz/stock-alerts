@@ -17,6 +17,7 @@ Configure your financial alerts from your favorite stock market and receive noti
 * EMA(5,GOOGL)>EMA(20,GOOGL)&&RSI(14,GOOGL)>50
 * MACD(12,26,MIRG.BA)<MACD_SIGNAL_LINE(12,26,9,MIRG.BA)
 * MACD_HISTOGRAM(12,26,9,GOOGL)>0
+* STOCHASTIC_K(14,GOOGL)>STOCHASTIC_D(14,3,GOOGL)
 
 ## Formulas
 * __SMA__: Simple Moving Average. Parameters: period and symbol.
@@ -27,6 +28,8 @@ Configure your financial alerts from your favorite stock market and receive noti
 * __MACD__: Moving Average Convergence/Divergence. Parameters: fastPeriod, slowPeriod and symbol.
 * __MACD_SIGNAL_LINE__: Signal Line value of Moving Average Convergence/Divergence. Parameters: fastPeriod, slowPeriod, signalPeriod and symbol.
 * __MACD_HISTOGRAM__: Histogram value of Moving Average Convergence/Divergence. Parameters: fastPeriod, slowPeriod, signalPeriod and symbol.
+* __STOCHASTIC_K__: Stochastic Oscillator %K value. Parameters: length and symbol.
+* __STOCHASTIC_D__: Stochastic Oscillator %D is a X-period simple moving average of %K. Parameters: length, period and symbol.
 
 
 ## Operators
@@ -48,6 +51,8 @@ Configure your financial alerts from your favorite stock market and receive noti
   * Returns historical stock information
 
 #### Formulas
+* GET /stock-alerts/formulas/price?symbol=GOOGL
+* GET /stock-alerts/formulas/volume?symbol=GOOGL
 * GET /stock-alerts/formulas/sma?period=50&symbol=GOOGL
 * GET /stock-alerts/formulas/ema?period=14&symbol=GOOGL
 * GET /stock-alerts/formulas/rsi?period=14&symbol=GOOGL 
@@ -63,8 +68,11 @@ Configure your financial alerts from your favorite stock market and receive noti
   * fastPeriod parameter is optional, default value is 12
   * slowPeriod parameter is optional, default value is 26
   * signalPeriod parameter is optional, default value is 9
-* GET /stock-alerts/formulas/price?symbol=GOOGL
-* GET /stock-alerts/formulas/volume?symbol=GOOGL
+* GET /stock-alerts/formulas/stochastick?length=14&symbol=GOOGL 
+  * length parameter is optional, default value is 14
+* GET /stock-alerts/formulas/stochastick?length=14&period=3&symbol=GOOGL 
+  * length parameter is optional, default value is 14
+  * period parameter is optional, default value is 3
 
 #### Alerts
 * GET /stock-alerts/alerts
@@ -114,3 +122,9 @@ Configure your financial alerts from your favorite stock market and receive noti
    "opposedAlertId": "franSell"
 }
 ```
+
+### Installation
+* Download the project
+* mvn package -DskipTests
+* Change values of application.properties
+* Deploy in your favorite application server (tomcat, etc)
