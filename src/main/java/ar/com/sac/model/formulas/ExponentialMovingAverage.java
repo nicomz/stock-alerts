@@ -1,5 +1,6 @@
-package ar.com.sac.model;
+package ar.com.sac.model.formulas;
 
+import ar.com.sac.model.Quote;
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -22,9 +23,11 @@ public class ExponentialMovingAverage implements Formula{
    }
 
    private double calculateEMA() {
-      double currentEMA = quotes.get( quotes.size() -1 ).getClose().doubleValue();
+      SimpleMovingAverage sma = new SimpleMovingAverage( period, quotes.subList( quotes.size() - period, quotes.size() ) );
+      double currentEMA = sma.calculate().doubleValue();
+      
       Quote quote;
-      for(int i = quotes.size()-2; i >= 0; i-- ){
+      for(int i = quotes.size()- period - 1; i >= 0; i-- ){
          quote = quotes.get( i );
          currentEMA = alpha * quote.getClose().doubleValue() + ((1 - alpha) * currentEMA);
       }
@@ -33,8 +36,8 @@ public class ExponentialMovingAverage implements Formula{
    }
 
    private void validate() {
-      if(quotes.size() == 0){
-         throw new RuntimeException( "EMA: There are no quotes to calculate EMA" );
+      if(quotes.size() < period){
+         throw new RuntimeException( "EMA: There are not enough quotes to calculate EMA(" + period + ")" );
       }
       
    }

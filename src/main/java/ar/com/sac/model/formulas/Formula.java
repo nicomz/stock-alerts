@@ -1,4 +1,4 @@
-package ar.com.sac.model;
+package ar.com.sac.model.formulas;
 
 import java.math.BigDecimal;
 

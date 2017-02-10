@@ -1,16 +1,18 @@
 package ar.com.sac.services;
 
 import ar.com.sac.model.Alert;
-import ar.com.sac.model.ExponentialMovingAverage;
-import ar.com.sac.model.MACD;
-import ar.com.sac.model.MACDHistogram;
-import ar.com.sac.model.MACDSignalLine;
 import ar.com.sac.model.Notification;
-import ar.com.sac.model.Price;
 import ar.com.sac.model.Quote;
-import ar.com.sac.model.RelativeStrengthIndex;
-import ar.com.sac.model.SimpleMovingAverage;
-import ar.com.sac.model.Volume;
+import ar.com.sac.model.formulas.ExponentialMovingAverage;
+import ar.com.sac.model.formulas.MACD;
+import ar.com.sac.model.formulas.MACDHistogram;
+import ar.com.sac.model.formulas.MACDSignalLine;
+import ar.com.sac.model.formulas.Price;
+import ar.com.sac.model.formulas.RelativeStrengthIndex;
+import ar.com.sac.model.formulas.SimpleMovingAverage;
+import ar.com.sac.model.formulas.StochasticOscillatorD;
+import ar.com.sac.model.formulas.StochasticOscillatorK;
+import ar.com.sac.model.formulas.Volume;
 import ar.com.sac.model.operations.OperationConstantValue;
 import ar.com.sac.model.operations.OperationFormula;
 import ar.com.sac.model.operations.OperationTerm;
@@ -250,6 +252,28 @@ public class AlertService {
          }
          MACD macd = new MACD( Integer.parseInt( params[0].substring( 5 ) ), Integer.parseInt( params[1] ), quotes );
          result = new OperationFormula( macd );
+      }else if(expression.startsWith( "STOCHASTIC_K" )){
+         String[] params = expression.split( "," );
+         List<Quote> quotes;
+         try {
+            quotes = stockService.getHistory( params[1].replace( ")","" ) );
+         } catch (Exception e) {
+            quotes = new ArrayList<Quote>();
+            e.printStackTrace();
+         }
+         StochasticOscillatorK sok = new StochasticOscillatorK( Integer.parseInt( params[0].substring( 13 ) ), quotes );
+         result = new OperationFormula( sok );
+      }else if(expression.startsWith( "STOCHASTIC_D" )){
+         String[] params = expression.split( "," );
+         List<Quote> quotes;
+         try {
+            quotes = stockService.getHistory( params[2].replace( ")","" ) );
+         } catch (Exception e) {
+            quotes = new ArrayList<Quote>();
+            e.printStackTrace();
+         }
+         StochasticOscillatorD sod = new StochasticOscillatorD( Integer.parseInt( params[0].substring( 13 )), Integer.parseInt( params[1] ) , quotes );
+         result = new OperationFormula( sod );
       }else{
          result = new OperationConstantValue( Double.parseDouble( expression ) );
       }

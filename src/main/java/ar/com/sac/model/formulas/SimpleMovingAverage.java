@@ -1,5 +1,6 @@
-package ar.com.sac.model;
+package ar.com.sac.model.formulas;
 
+import ar.com.sac.model.Quote;
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -26,7 +27,7 @@ public class SimpleMovingAverage implements Formula {
          sum = sum.add( quotes.get(i).getClose() );
       }
       
-      return sum.divide( new BigDecimal( period ) );
+      return new BigDecimal( sum.doubleValue() /  period  );
    }
 
    private void validate() {

@@ -1,16 +1,16 @@
 package ar.com.sac.services;
 
-import ar.com.sac.model.ExponentialMovingAverage;
-import ar.com.sac.model.MACD;
-import ar.com.sac.model.MACDHistogram;
-import ar.com.sac.model.MACDSignalLine;
-import ar.com.sac.model.Price;
 import ar.com.sac.model.Quote;
-import ar.com.sac.model.RelativeStrengthIndex;
-import ar.com.sac.model.SimpleMovingAverage;
-import ar.com.sac.model.StochasticOscillatorD;
-import ar.com.sac.model.StochasticOscillatorK;
-import ar.com.sac.model.Volume;
+import ar.com.sac.model.formulas.ExponentialMovingAverage;
+import ar.com.sac.model.formulas.MACD;
+import ar.com.sac.model.formulas.MACDHistogram;
+import ar.com.sac.model.formulas.MACDSignalLine;
+import ar.com.sac.model.formulas.Price;
+import ar.com.sac.model.formulas.RelativeStrengthIndex;
+import ar.com.sac.model.formulas.SimpleMovingAverage;
+import ar.com.sac.model.formulas.StochasticOscillatorD;
+import ar.com.sac.model.formulas.StochasticOscillatorK;
+import ar.com.sac.model.formulas.Volume;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.List;

@@ -1,5 +1,6 @@
-package ar.com.sac.model;
+package ar.com.sac.model.formulas;
 
+import ar.com.sac.model.Quote;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,8 +28,8 @@ public class MACDSignalLine implements Formula {
       BigDecimal macdValue;
       Quote macdQuote;
       //Calculate MACD of every quote and store in macdQuotes, then calculate EMA(signalPeriod)
-      for(int i=1; i < quotes.size() + 1; i++){
-         macd = new MACD( fastPeriod, slowPeriod, quotes.subList( 0, i ) );
+      for(int i= quotes.size() - slowPeriod; i >= 0; i--){
+         macd = new MACD( fastPeriod, slowPeriod, quotes.subList( i, quotes.size() ) );
          macdValue = macd.calculate();
          macdQuote = new Quote();
          macdQuote.setClose( macdValue );

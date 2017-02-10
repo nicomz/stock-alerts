@@ -1,6 +1,6 @@
 package ar.com.sac.model.operations;
 
-import ar.com.sac.model.Formula;
+import ar.com.sac.model.formulas.Formula;
 
 public class OperationFormula implements OperationTerm {
    

@@ -1,5 +1,6 @@
 package ar.com.sac.model;
 
+import ar.com.sac.model.formulas.RelativeStrengthIndex;
 import org.junit.Assert;
 import org.junit.Test;
 

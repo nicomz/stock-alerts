@@ -1,5 +1,6 @@
-package ar.com.sac.model;
+package ar.com.sac.model.formulas;
 
+import ar.com.sac.model.Quote;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
