@@ -93,7 +93,7 @@ public class AlertService {
       StringBuilder sb = new StringBuilder();
       sb.append( alert.getDescription() );
       sb.append( "<BR>" );
-      sb.append( "Expression: " + alert.getExpression() );
+      sb.append( "Expression: " + alert.getExpression().replaceAll( ">", "&gt;" ).replaceAll( "<", "&lt;" ) );
       sb.append( "<BR><BR>" );
       sb.append( "<a href=\"" + generateLink(alert.getId()) +  "/deactivate\" target=\"_blank\">Deactivate this alert</a>" );
       sb.append( "<BR>" );
