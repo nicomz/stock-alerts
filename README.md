@@ -128,3 +128,20 @@ Configure your financial alerts from your favorite stock market and receive noti
 * mvn package -DskipTests
 * Change values of application.properties
 * Deploy in your favorite application server (tomcat, etc)
+
+## (Coming soon...) Strategy Simulator
+
+### Simulator parameters JSON object
+```
+{
+   "initialCapital": 100000,
+   "commissionPercentage": 0.6,
+   "positionMinimumValue": 20000,
+   "positionPercentage": 20,
+   "positionMaximumValue": 150000,
+   "buyExpression": "MACD(12,26,CRES.BA)>MACD_SIGNAL_LINE(12,26,9,CRES.BA)",
+   "sellExpression": "MACD(12,26,CRES.BA)<MACD_SIGNAL_LINE(12,26,9,CRES.BA)",
+   "stopLossPercentage" :  2,
+   "symbols": ["GOOGL","AAPL","TSLA"],
+}
+```
