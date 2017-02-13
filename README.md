@@ -139,8 +139,8 @@ Configure your financial alerts from your favorite stock market and receive noti
    "positionMinimumValue": 20000,
    "positionPercentage": 20,
    "positionMaximumValue": 150000,
-   "buyExpression": "MACD(12,26,CRES.BA)>MACD_SIGNAL_LINE(12,26,9,CRES.BA)",
-   "sellExpression": "MACD(12,26,CRES.BA)<MACD_SIGNAL_LINE(12,26,9,CRES.BA)",
+   "buyExpression": "MACD(12,26,[SYMBOL])>MACD_SIGNAL_LINE(12,26,9,[SYMBOL])",
+   "sellExpression": "MACD(12,26,[SYMBOL])<MACD_SIGNAL_LINE(12,26,9,[SYMBOL])",
    "stopLossPercentage" :  2,
    "symbols": ["GOOGL","AAPL","TSLA"],
 }
