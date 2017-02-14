@@ -98,6 +98,11 @@ Configure your financial alerts from your favorite stock market and receive noti
   * Processes a particular alert immediately
 * GET /stock-alerts/alerts/process 
   * Processes all active alerts immediately
+  
+#### Simulator
+* POST /stock-alerts/simulator
+  * Run a new Simulation
+  * Passing a JSON representation of a "Simulator Parameters" object as body
 
 ## Alert object structure
 * __id__ = An alert identifier. For example: GOOGLE1
@@ -129,9 +134,9 @@ Configure your financial alerts from your favorite stock market and receive noti
 * Change values of application.properties
 * Deploy in your favorite application server (tomcat, etc)
 
-## (Coming soon...) Strategy Simulator
+## Strategy Simulator
 
-### Simulator parameters JSON object
+### Simulator Parameters JSON object
 ```
 {
    "initialCapital": 100000,
@@ -143,5 +148,7 @@ Configure your financial alerts from your favorite stock market and receive noti
    "sellExpression": "MACD(12,26,[SYMBOL])<MACD_SIGNAL_LINE(12,26,9,[SYMBOL])",
    "stopLossPercentage" :  2,
    "symbols": ["GOOGL","AAPL","TSLA"],
+   "yearFrom": 2016,
+   "yearTo": 2017
 }
 ```
