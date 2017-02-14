@@ -3,7 +3,7 @@ package ar.com.sac.model.simulator;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SimulatorResults {
+public class SimulationResults {
    
    private List<SimulatorRecord> records = new ArrayList<>();
    

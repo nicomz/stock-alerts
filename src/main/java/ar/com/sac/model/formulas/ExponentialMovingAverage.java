@@ -37,7 +37,7 @@ public class ExponentialMovingAverage implements Formula{
 
    private void validate() {
       if(quotes.size() < period){
-         throw new RuntimeException( "EMA: There are not enough quotes to calculate EMA(" + period + ")" );
+         throw new RuntimeException( "EMA: There are not enough quotes to calculate EMA(" + period + ") Quantity of Quotes: " + quotes.size() );
       }
       
    }

@@ -1,5 +1,6 @@
 package ar.com.sac.model.simulator;
 
+import java.util.Calendar;
 
 public class SimulatorParameters {
    
@@ -12,6 +13,8 @@ public class SimulatorParameters {
    private String sellExpression;
    private double stopLossPercentage;
    private String[] symbols;
+   private int yearFrom = Calendar.getInstance().get(Calendar.YEAR) - 5;
+   private int yearTo = Calendar.getInstance().get(Calendar.YEAR);
    
    /**
     * @return the initialCapital
@@ -137,6 +140,38 @@ public class SimulatorParameters {
     */
    public synchronized void setSymbols( String[] symbols ) {
       this.symbols = symbols;
+   }
+
+   
+   /**
+    * @return the yearFrom
+    */
+   public synchronized int getYearFrom() {
+      return yearFrom;
+   }
+
+   
+   /**
+    * @param yearFrom the yearFrom to set
+    */
+   public synchronized void setYearFrom( int yearFrom ) {
+      this.yearFrom = yearFrom;
+   }
+
+   
+   /**
+    * @return the yearTo
+    */
+   public synchronized int getYearTo() {
+      return yearTo;
+   }
+
+   
+   /**
+    * @param yearTo the yearTo to set
+    */
+   public synchronized void setYearTo( int yearTo ) {
+      this.yearTo = yearTo;
    }
 
    

@@ -1,5 +1,7 @@
 package ar.com.sac.model.simulator;
 
+import ar.com.sac.model.CalendarSerializer;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import java.util.Calendar;
 
 public class SimulatorRecord {
@@ -14,6 +16,7 @@ public class SimulatorRecord {
    private double orderAmount; //amount of stocks
    private double orderPrice;
    private double orderTotalCost;
+   private double operationPerformance;
    
    /**
     * @return the id
@@ -102,6 +105,7 @@ public class SimulatorRecord {
    /**
     * @return the orderDate
     */
+   @JsonSerialize(using = CalendarSerializer.class)
    public synchronized Calendar getOrderDate() {
       return orderDate;
    }
@@ -153,6 +157,14 @@ public class SimulatorRecord {
     */
    public synchronized void setOrderTotalCost( double orderTotalCost ) {
       this.orderTotalCost = orderTotalCost;
+   }
+
+   public double getOperationPerformance() {
+      return operationPerformance;
+   }
+
+   public void setOperationPerformance( double operationPerformance ) {
+      this.operationPerformance = operationPerformance;
    }
    
    

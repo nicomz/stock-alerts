@@ -1,6 +1,7 @@
 package ar.com.sac.services;
 
 import java.io.IOException;
+import java.util.Calendar;
 import java.util.List;
 import org.springframework.stereotype.Service;
 import yahoofinance.Stock;
@@ -23,6 +24,17 @@ public class YahooFinanceService {
     */
    public List<HistoricalQuote> getHistory( String symbol ) throws IOException{
       Stock stock = YahooFinance.get( symbol );
+      return stock.getHistory( Interval.DAILY );
+   }
+   
+   /**
+    * Returns a year of daily quotes in DESC order. It doesn't retrieve the last price
+    * @param symbol
+    * @return
+    * @throws IOException
+    */
+   public List<HistoricalQuote> getHistory( String symbol, Calendar from, Calendar to ) throws IOException{
+      Stock stock = YahooFinance.get( symbol, from, to );
       return stock.getHistory( Interval.DAILY );
    }
 

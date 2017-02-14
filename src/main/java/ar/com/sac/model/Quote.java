@@ -1,5 +1,6 @@
 package ar.com.sac.model;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import java.math.BigDecimal;
 import java.util.Calendar;
 import yahoofinance.histquotes.HistoricalQuote;
@@ -42,6 +43,7 @@ public class Quote {
       this.volume = historicalQuote.getVolume();
    }
    
+   @JsonSerialize(using = CalendarSerializer.class)
    public Calendar getDate(){
       return date;
    }
