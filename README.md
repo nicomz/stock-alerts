@@ -70,7 +70,7 @@ Configure your financial alerts from your favorite stock market and receive noti
   * signalPeriod parameter is optional, default value is 9
 * GET /stock-alerts/formulas/stochastick?length=14&symbol=GOOGL 
   * length parameter is optional, default value is 14
-* GET /stock-alerts/formulas/stochastick?length=14&period=3&symbol=GOOGL 
+* GET /stock-alerts/formulas/stochasticd?length=14&period=3&symbol=GOOGL 
   * length parameter is optional, default value is 14
   * period parameter is optional, default value is 3
 
@@ -135,6 +135,11 @@ Configure your financial alerts from your favorite stock market and receive noti
 * Deploy in your favorite application server (tomcat, etc)
 
 ## Strategy Simulator
+
+### Simulation Constants valid in formulas
+* __[SYMBOL]__: It will be replaced by the current Symbol in simulation
+* __[OPERATION_PERFORMANCE]__: It will be replaced by the operation value of leaving position from current Symbol in simulation
+* __[OPERATION_PERFORMANCE_PERCENTAGE]__: It will be replaced by the operation percentage of leaving position from current Symbol in simulation
 
 ### Simulator Parameters JSON object
 ```
