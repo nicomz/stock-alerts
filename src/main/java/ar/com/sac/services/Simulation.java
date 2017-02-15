@@ -5,6 +5,7 @@ import ar.com.sac.model.operations.Operator;
 import ar.com.sac.model.simulator.SimulationResults;
 import ar.com.sac.model.simulator.SimulatorParameters;
 import ar.com.sac.model.simulator.SimulatorRecord;
+import ar.com.sac.model.simulator.SymbolPerformanceStatistics;
 import java.io.IOException;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -26,6 +27,7 @@ public class Simulation {
    private Quote currentLastQuote;
    private Map<String, List<Quote>> symbolToQuotesMap  = new HashMap<>();
    private Map<String, SimulatorRecord> positionsMap = new HashMap<>();
+   private Map<String, SymbolPerformanceStatistics> performanceBySymbolMap = new HashMap<>();
    private int previousAnalysisDays = 35;
    private SimulatorRecord lastSimulatorRecord;
    private int minQuoteSize = Integer.MAX_VALUE;
@@ -55,6 +57,9 @@ public class Simulation {
                }
             }
          }
+         simulationResults.setFinalLiquity( lastSimulatorRecord.getLiquity() );
+         simulationResults.setFinalCapitalBalance( lastSimulatorRecord.getCapitalBalance() );
+         simulationResults.setSymbolPerformances( performanceBySymbolMap.values() );
          return simulationResults;
       } catch (IOException e) {
          e.printStackTrace();
@@ -103,6 +108,7 @@ public class Simulation {
          positionsMap.put( currentSymbol, null );
          lastSimulatorRecord = sellRecord;
          sold = true;
+         updateStatistics();
       }
       
       return sold;
@@ -125,6 +131,7 @@ public class Simulation {
          positionsMap.put( currentSymbol, null );
          lastSimulatorRecord = sellRecord;
          sold = true;
+         updateStatistics();
       }
       return sold;
    }
@@ -214,6 +221,24 @@ public class Simulation {
       double estimatedComission = aux * parameters.getCommissionPercentage() /100d;
       
       return aux - estimatedComission;
+   }
+   
+   private void updateStatistics() {
+      SymbolPerformanceStatistics symbolPerformance = performanceBySymbolMap.get( currentSymbol );
+      if(symbolPerformance == null){
+         symbolPerformance = new SymbolPerformanceStatistics();
+         symbolPerformance.setSymbol( currentSymbol );
+         performanceBySymbolMap.put( currentSymbol, symbolPerformance );
+      }
+      
+      if(lastSimulatorRecord.getOrderType().startsWith( "Sell" )){
+         symbolPerformance.setPerformance( symbolPerformance.getPerformance() + lastSimulatorRecord.getOperationPerformance() );
+         if(lastSimulatorRecord.getOperationPerformance()>0){
+            symbolPerformance.incPositiveSales();
+         }else{
+            symbolPerformance.incNegativeSales();
+         }
+      }
    }
 
    
