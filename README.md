@@ -70,7 +70,7 @@ Configure your financial alerts from your favorite stock market and receive noti
   * signalPeriod parameter is optional, default value is 9
 * GET /stock-alerts/formulas/stochastick?length=14&symbol=GOOGL 
   * length parameter is optional, default value is 14
-* GET /stock-alerts/formulas/stochastick?length=14&period=3&symbol=GOOGL 
+* GET /stock-alerts/formulas/stochasticd?length=14&period=3&symbol=GOOGL 
   * length parameter is optional, default value is 14
   * period parameter is optional, default value is 3
 
@@ -98,6 +98,11 @@ Configure your financial alerts from your favorite stock market and receive noti
   * Processes a particular alert immediately
 * GET /stock-alerts/alerts/process 
   * Processes all active alerts immediately
+  
+#### Simulator
+* POST /stock-alerts/simulator
+  * Run a new Simulation
+  * Passing a JSON representation of a "Simulator Parameters" object as body
 
 ## Alert object structure
 * __id__ = An alert identifier. For example: GOOGLE1
@@ -129,9 +134,14 @@ Configure your financial alerts from your favorite stock market and receive noti
 * Change values of application.properties
 * Deploy in your favorite application server (tomcat, etc)
 
-## (Coming soon...) Strategy Simulator
+## Strategy Simulator
 
-### Simulator parameters JSON object
+### Simulation Constants valid in formulas
+* __[SYMBOL]__: It will be replaced by the current Symbol in simulation
+* __[OPERATION_PERFORMANCE]__: It will be replaced by the operation value of leaving position from current Symbol in simulation
+* __[OPERATION_PERFORMANCE_PERCENTAGE]__: It will be replaced by the operation percentage of leaving position from current Symbol in simulation
+
+### Simulator Parameters JSON object
 ```
 {
    "initialCapital": 100000,
@@ -143,5 +153,7 @@ Configure your financial alerts from your favorite stock market and receive noti
    "sellExpression": "MACD(12,26,[SYMBOL])<MACD_SIGNAL_LINE(12,26,9,[SYMBOL])",
    "stopLossPercentage" :  2,
    "symbols": ["GOOGL","AAPL","TSLA"],
+   "yearFrom": 2016,
+   "yearTo": 2017
 }
 ```
