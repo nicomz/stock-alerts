@@ -20,6 +20,14 @@ public class OperatorGREATERThan implements Operator {
       }
       return result;
    }
-
+   
+   @Override
+   public String toString() {
+      StringBuilder sb = new StringBuilder();
+      sb.append( terms.get( 0 ) );
+      sb.append( ">" );
+      sb.append( terms.get( 1 ) );
+      return sb.toString();
+   }
 
 }

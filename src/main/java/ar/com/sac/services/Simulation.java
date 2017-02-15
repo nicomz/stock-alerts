@@ -22,6 +22,8 @@ public class Simulation {
    
    
    //simulation variables
+   private String currentSymbol;
+   private Quote currentLastQuote;
    private Map<String, List<Quote>> symbolToQuotesMap  = new HashMap<>();
    private Map<String, SimulatorRecord> positionsMap = new HashMap<>();
    private int previousAnalysisDays = 35;
@@ -42,11 +44,13 @@ public class Simulation {
          
          for( int i = previousAnalysisDays; i < minQuoteSize; i++ ){
             for(String symbol : parameters.getSymbols()){
-               quotesAux = symbolToQuotesMap.get( symbol );
+               currentSymbol = symbol;
+               quotesAux = symbolToQuotesMap.get( currentSymbol );
                stockSimulatorService.setSimulationQuotes( quotesAux.subList( quotesAux.size() - i, quotesAux.size() ));
-               if(!tryBuy( symbol )){
-                  if(!trySell( symbol )){
-                     tryStopLoss( symbol );
+               currentLastQuote = stockSimulatorService.getStock( currentSymbol ).getLastQuote();
+               if(!tryBuy()){
+                  if(!trySell()){
+                     tryStopLoss();
                   }
                }
             }
@@ -78,24 +82,25 @@ public class Simulation {
       }
    }
 
-   private boolean tryStopLoss( String symbol ) throws IOException {
-//      stockSimulatorService.getStock( symbol ).getLastQuote();
+   private boolean tryStopLoss() throws IOException {
       boolean sold = false;
-      if( positionsMap.get( symbol ) == null ) {
+      if( positionsMap.get( currentSymbol ) == null ) {
          return false; //There is NOT a position on this symbol
       }
+      if(isVacationDay( currentSymbol )){
+         return false;
+      }
       
-      Quote lastQuote = stockSimulatorService.getStock( symbol ).getLastQuote();
-      SimulatorRecord positionRecord = positionsMap.get( symbol );
+      SimulatorRecord positionRecord = positionsMap.get( currentSymbol );
       
       double maxCapitalToLoss = lastSimulatorRecord.getCapitalBalance() * parameters.getStopLossPercentage() / 100d;
-      double currentValue = lastQuote.getClose().doubleValue() * positionRecord.getOrderAmount();
+      double currentValue = currentLastQuote.getClose().doubleValue() * positionRecord.getOrderAmount();
       if( (positionRecord.getOrderTotalCost() - currentValue) > maxCapitalToLoss ){
-         SimulatorRecord sellRecord = sell( symbol );
+         SimulatorRecord sellRecord = sell();
          sellRecord.setOrderType( "Sell on StopLoss" );
          
          simulationResults.addRecord( sellRecord );
-         positionsMap.put( symbol, null );
+         positionsMap.put( currentSymbol, null );
          lastSimulatorRecord = sellRecord;
          sold = true;
       }
@@ -103,27 +108,38 @@ public class Simulation {
       return sold;
    }
 
-   private boolean trySell( String symbol ) throws IOException {
-      if( positionsMap.get( symbol ) == null ) {
+   private boolean trySell() throws IOException {
+      if( positionsMap.get( currentSymbol ) == null ) {
          return false; //There is NOT a position on this symbol
       }
+      if(isVacationDay( currentSymbol )){
+         return false;
+      }
+      
       boolean sold = false;
-      Operator operator = expressionService.parseExpression( parameters.getSellExpression(), stockSimulatorService );
+      Operator operator = expressionService.parseSimulatorExpression( parameters.getSellExpression(), this, stockSimulatorService );
       if( operator.evaluate() ){
-         SimulatorRecord sellRecord = sell( symbol );
+         SimulatorRecord sellRecord = sell();
         
          simulationResults.addRecord( sellRecord );
-         positionsMap.put( symbol, null );
+         positionsMap.put( currentSymbol, null );
          lastSimulatorRecord = sellRecord;
          sold = true;
       }
       return sold;
    }
 
-   private SimulatorRecord sell( String symbol ) throws IOException {
-      Quote lastQuote = stockSimulatorService.getStock( symbol ).getLastQuote();
-      SimulatorRecord positionRecord = positionsMap.get( symbol );
-      double sellAux = lastQuote.getClose().doubleValue() * positionRecord.getOrderAmount();
+   private boolean isVacationDay( String symbol ) throws IOException {
+      if(currentLastQuote.getVolume() == 0L){
+         //you cannot operate on vacation day
+         return true;
+      }
+      return false;
+   }
+
+   private SimulatorRecord sell() throws IOException {
+      SimulatorRecord positionRecord = positionsMap.get( currentSymbol );
+      double sellAux = currentLastQuote.getClose().doubleValue() * positionRecord.getOrderAmount();
       double commission = sellAux * parameters.getCommissionPercentage() / 100d;
       double totalEarned = sellAux - commission;
       
@@ -131,29 +147,32 @@ public class Simulation {
       sellRecord.setRelatedRecordId( positionRecord.getId() );
       sellRecord.setId( lastSimulatorRecord.getId() + 1 );
       sellRecord.setOrderAmount( positionRecord.getOrderAmount() );
-      sellRecord.setOrderPrice( lastQuote.getClose().doubleValue() );
-      sellRecord.setOrderDate( lastQuote.getDate() );
+      sellRecord.setOrderPrice( currentLastQuote.getClose().doubleValue() );
+      sellRecord.setOrderDate( currentLastQuote.getDate() );
       sellRecord.setLiquity( lastSimulatorRecord.getLiquity() + totalEarned );
       sellRecord.setOrderTotalCost( totalEarned );
-      sellRecord.setOrderSymbol( symbol );
+      sellRecord.setOrderSymbol( currentSymbol );
       sellRecord.setOrderType( "Sell" );
       sellRecord.setCapitalBalance( lastSimulatorRecord.getCapitalBalance() + totalEarned - (positionRecord.getOrderAmount() * positionRecord.getOrderPrice()) );
       sellRecord.setOperationPerformance( sellRecord.getOrderTotalCost() - positionRecord.getOrderTotalCost() );
       return sellRecord;
    }
 
-   private boolean tryBuy( String symbol ) throws IOException {
-      if( positionsMap.get( symbol ) != null ) {
+   private boolean tryBuy() throws IOException {
+      if( positionsMap.get( currentSymbol ) != null ) {
          return false; //already has position on this symbol
       }
+      
+      if(isVacationDay( currentSymbol )){
+         return false;
+      }
       boolean bought = false;
-      Operator operator = expressionService.parseExpression( parameters.getBuyExpression(), stockSimulatorService );
+      Operator operator = expressionService.parseSimulatorExpression( parameters.getBuyExpression(), this, stockSimulatorService );
       
       if( operator.evaluate() ){
          if(lastSimulatorRecord.getLiquity() >= parameters.getPositionMinimumValue()){
             double buyPrice = calculateBuyPrice();
-            Quote lastQuote = stockSimulatorService.getStock( symbol ).getLastQuote();
-            double stockPrice = lastQuote.getClose().doubleValue();
+            double stockPrice = currentLastQuote.getClose().doubleValue();
             int amount = (int)(buyPrice / stockPrice);
             double stocksValue = amount * stockPrice;
             double commission =  stocksValue * parameters.getCommissionPercentage() / 100d;
@@ -164,14 +183,14 @@ public class Simulation {
             buyRecord.setLiquity( lastSimulatorRecord.getLiquity() - orderValue );
             buyRecord.setOrderAmount( amount );
             buyRecord.setOrderPrice( stockPrice );
-            buyRecord.setOrderSymbol( symbol );
-            buyRecord.setOrderDate( lastQuote.getDate() );
+            buyRecord.setOrderSymbol( currentSymbol );
+            buyRecord.setOrderDate( currentLastQuote.getDate() );
             buyRecord.setOrderTotalCost( orderValue );
             buyRecord.setOrderType( "Buy" );
             buyRecord.setCapitalBalance( lastSimulatorRecord.getCapitalBalance() - commission );
             
             simulationResults.addRecord( buyRecord );
-            positionsMap.put( symbol, buyRecord );
+            positionsMap.put( currentSymbol, buyRecord );
             lastSimulatorRecord = buyRecord;
             bought = true;
          }
@@ -196,5 +215,31 @@ public class Simulation {
       
       return aux - estimatedComission;
    }
+
+   
+   /**
+    * @return the currentSymbol
+    */
+   public synchronized String getCurrentSymbol() {
+      return currentSymbol;
+   }
+
+   
+   /**
+    * @return the currentLastQuote
+    */
+   public synchronized Quote getCurrentLastQuote() {
+      return currentLastQuote;
+   }
+
+   
+   /**
+    * @return the positionsMap
+    */
+   public synchronized SimulatorRecord getPosition( String symbol ) {
+      return positionsMap.get( symbol );
+   }
+   
+   
 
 }

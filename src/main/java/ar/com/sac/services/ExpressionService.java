@@ -18,6 +18,7 @@ import ar.com.sac.model.operations.Operator;
 import ar.com.sac.model.operations.OperatorAND;
 import ar.com.sac.model.operations.OperatorGREATERThan;
 import ar.com.sac.model.operations.OperatorLESSThan;
+import ar.com.sac.model.simulator.SimulatorRecord;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.stereotype.Service;
@@ -25,7 +26,33 @@ import org.springframework.stereotype.Service;
 @Service
 public class ExpressionService {
    
+   public String normalizeExpression( String expression ){
+      return expression.replace( " ", "" ).toUpperCase();
+   }
+   
+   private String replaceSimulationConstants( String expression, Simulation simulation) {
+      expression = normalizeExpression(expression);
+      expression = expression.replaceAll( "\\[SYMBOL\\]", simulation.getCurrentSymbol() );
+      double operationPerfomance = 0d;
+      double operationPerfomancePercentage = 0d;
+      SimulatorRecord currentPosition = simulation.getPosition( simulation.getCurrentSymbol() );
+      if( currentPosition != null ){
+         operationPerfomance = (simulation.getCurrentLastQuote().getClose().doubleValue() * currentPosition.getOrderAmount()) - currentPosition.getOrderTotalCost();
+         operationPerfomancePercentage = operationPerfomance * 100d / currentPosition.getOrderTotalCost();
+      }
+      
+      expression = expression.replaceAll( "\\[OPERATION_PERFOMANCE\\]", String.valueOf( operationPerfomance ));
+      expression = expression.replaceAll( "\\[OPERATION_PERFOMANCE_PERCENTAGE\\]", String.valueOf( operationPerfomancePercentage ));
+      return expression;
+   }
+   
+   public Operator parseSimulatorExpression( String expression, Simulation simulation, IStockService stockService ) {
+      expression = replaceSimulationConstants( expression, simulation );
+      return parseExpression( expression, stockService );
+   }
+   
    public Operator parseExpression( String expression, IStockService stockService ) {
+      expression = normalizeExpression(expression);
       String[] andSplit = expression.split( "&&" );
       Operator result;
       if(andSplit.length == 1){

@@ -23,20 +23,20 @@ public class StockService implements IStockService{
    
    public List<Quote> getHistory( String symbol ) throws IOException{
       List<HistoricalQuote> history = yahooFinanceService.getHistory( symbol );
-      List<Quote> quotes = new ArrayList<Quote>( history.size() );
-      for(HistoricalQuote h : history){
-         quotes.add( new Quote(h) );
-      }
+      List<Quote> quotes = historyToQuotes( history );
       return quotes;
    }
    
    public List<Quote> getHistory( String symbol, Calendar from, Calendar to ) throws IOException{
       List<HistoricalQuote> history = yahooFinanceService.getHistory( symbol, from, to );
+      List<Quote> quotes = historyToQuotes( history );
+      return quotes;
+   }
+
+   private List<Quote> historyToQuotes( List<HistoricalQuote> history ) {
       List<Quote> quotes = new ArrayList<Quote>( history.size() );
       for(HistoricalQuote h : history){
-         if(h.getVolume() != 0){
-            quotes.add( new Quote(h) );
-         }
+         quotes.add( new Quote(h) );
       }
       return quotes;
    }

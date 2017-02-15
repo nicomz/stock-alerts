@@ -104,7 +104,7 @@ public class AlertService {
    }
 
    private void processAlert( Alert alert, List<Notification> notifications ) {
-      Operator operator = expressionService.parseExpression( alert.getExpression().replace( " ", "" ).toUpperCase(), stockService );
+      Operator operator = expressionService.parseExpression( alert.getExpression(), stockService );
       if(operator.evaluate()){
          Notification notification = new Notification();
          notification.setCreationDate( new Date() );
