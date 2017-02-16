@@ -34,8 +34,8 @@ public class YahooFinanceService {
     * @throws IOException
     */
    public List<HistoricalQuote> getHistory( String symbol, Calendar from, Calendar to ) throws IOException{
-      Stock stock = YahooFinance.get( symbol, from, to );
-      return stock.getHistory( Interval.DAILY );
+      Stock stock = YahooFinance.get( symbol, from, to, Interval.DAILY );
+      return stock.getHistory( from, to, Interval.DAILY );
    }
 
 }

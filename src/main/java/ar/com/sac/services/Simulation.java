@@ -7,7 +7,10 @@ import ar.com.sac.model.simulator.SimulatorParameters;
 import ar.com.sac.model.simulator.SimulatorRecord;
 import ar.com.sac.model.simulator.SymbolPerformanceStatistics;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
@@ -25,12 +28,13 @@ public class Simulation {
    //simulation variables
    private String currentSymbol;
    private Quote currentLastQuote;
+   private List<Quote> allTheQuotes = new ArrayList<>();
+   private Map<String, Integer> indexPerSymbolMap  = new HashMap<>();
    private Map<String, List<Quote>> symbolToQuotesMap  = new HashMap<>();
    private Map<String, SimulatorRecord> positionsMap = new HashMap<>();
    private Map<String, SymbolPerformanceStatistics> performanceBySymbolMap = new HashMap<>();
-   private int previousAnalysisDays = 35;
+   private int previousAnalysisDays = 50;
    private SimulatorRecord lastSimulatorRecord;
-   private int minQuoteSize = Integer.MAX_VALUE;
 
    public Simulation( SimulatorParameters parameters, StockService stockService, ExpressionService expressionService ){
       this.parameters = parameters;
@@ -44,27 +48,35 @@ public class Simulation {
          initSimulationVariables();
          List<Quote> quotesAux;
          
-         for( int i = previousAnalysisDays; i < minQuoteSize; i++ ){
-            for(String symbol : parameters.getSymbols()){
-               currentSymbol = symbol;
-               quotesAux = symbolToQuotesMap.get( currentSymbol );
-               stockSimulatorService.setSimulationQuotes( quotesAux.subList( quotesAux.size() - i, quotesAux.size() ));
-               currentLastQuote = stockSimulatorService.getStock( currentSymbol ).getLastQuote();
-               if(!tryBuy()){
-                  if(!trySell()){
-                     tryStopLoss();
-                  }
+         int index;
+         for( Quote currentQuote: allTheQuotes){
+            currentSymbol = currentQuote.getSymbol();
+            quotesAux = symbolToQuotesMap.get( currentSymbol );
+            index = indexPerSymbolMap.get( currentSymbol );
+            stockSimulatorService.setSimulationQuotes( quotesAux.subList( quotesAux.size() - index, quotesAux.size() ));
+            currentLastQuote = stockSimulatorService.getStock( currentSymbol ).getLastQuote();
+            if(!tryBuy()){
+               if(!trySell()){
+                  tryStopLoss();
                }
             }
+            indexPerSymbolMap.put( currentSymbol, ++index );
          }
-         simulationResults.setFinalLiquity( lastSimulatorRecord.getLiquity() );
-         simulationResults.setFinalCapitalBalance( lastSimulatorRecord.getCapitalBalance() );
-         simulationResults.setSymbolPerformances( performanceBySymbolMap.values() );
+         completeSimulationResults();
          return simulationResults;
       } catch (IOException e) {
          e.printStackTrace();
          throw new RuntimeException( "Error running simulation" );
       }
+   }
+
+   private void completeSimulationResults() {
+      simulationResults.setFinalLiquity( lastSimulatorRecord.getLiquity() );
+      simulationResults.setFinalCapitalBalance( lastSimulatorRecord.getCapitalBalance() );
+      simulationResults.setSymbolPerformances( performanceBySymbolMap.values() );
+      simulationResults.setQuantityOfOperations( simulationResults.getRecords().size() - 1  );
+      simulationResults.setTotalPerformance( lastSimulatorRecord.getCapitalBalance() - parameters.getInitialCapital() );
+      simulationResults.setTotalPerformancePercentage( (lastSimulatorRecord.getCapitalBalance() - parameters.getInitialCapital())*100/parameters.getInitialCapital() );
    }
 
    private void initSimulationVariables() throws IOException {
@@ -80,11 +92,17 @@ public class Simulation {
       Calendar to = new GregorianCalendar(parameters.getYearTo(),11,31);
       for(String symbol : parameters.getSymbols()){
          quotesAux = stockService.getHistory( symbol, from, to );
-         if( quotesAux.size() < minQuoteSize ){
-            minQuoteSize = quotesAux.size();
-         }
+         allTheQuotes.addAll( quotesAux.subList( 0, quotesAux.size() - previousAnalysisDays ) );
+         indexPerSymbolMap.put( symbol, previousAnalysisDays );
          symbolToQuotesMap.put( symbol, quotesAux );
       }
+      //allThQuotes must be sorted ASC
+      Collections.sort( allTheQuotes, new Comparator<Quote>() {
+
+         @Override
+         public int compare( Quote o1, Quote o2 ) {
+            return o1.getDate().compareTo( o2.getDate() );
+         }} );
    }
 
    private boolean tryStopLoss() throws IOException {

@@ -36,7 +36,12 @@ public class StochasticOscillatorK implements Formula {
       //100(C - L14)/(H14 - L14)
       double dividend = highestHigh - lowestLow ;
       double numerator = firstQuote.getClose().doubleValue() - lowestLow ;
-      return new BigDecimal( (numerator / dividend) * 100d);
+      try{
+         return new BigDecimal( (numerator / dividend) * 100d);
+      }catch(NumberFormatException nfe){
+//         System.err.println( "Error calculating: (numerator / dividend) * 100d: (" + numerator + " / " + dividend +") * 100d = " + (numerator / dividend) * 100d);
+         return new BigDecimal(0);
+      }
    }
 
    private void validate() {

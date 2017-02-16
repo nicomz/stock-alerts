@@ -7,8 +7,11 @@ import java.util.List;
 public class SimulationResults {
    
    private double finalCapitalBalance;
+   private double totalPerformance;
+   private double totalPerformancePercentage;
    private double finalLiquity;
    private Collection<SymbolPerformanceStatistics> symbolPerformances;
+   private int quantityOfOperations;
    
    private List<SimulatorRecord> records = new ArrayList<>();
    
@@ -46,6 +49,46 @@ public class SimulationResults {
    public synchronized double getFinalLiquity() {
       return finalLiquity;
    }
+   
+   public int getQuantityOfOperations() {
+      return quantityOfOperations;
+   }
+
+   public void setQuantityOfOperations( int quantityOfOperations ) {
+      this.quantityOfOperations = quantityOfOperations;
+   }
+
+   
+   /**
+    * @return the totalPerformance
+    */
+   public synchronized double getTotalPerformance() {
+      return totalPerformance;
+   }
+
+   
+   /**
+    * @param totalPerformance the totalPerformance to set
+    */
+   public synchronized void setTotalPerformance( double totalPerformance ) {
+      this.totalPerformance = totalPerformance;
+   }
+
+   
+   /**
+    * @return the totalPerformancePercentage
+    */
+   public synchronized double getTotalPerformancePercentage() {
+      return totalPerformancePercentage;
+   }
+
+   
+   /**
+    * @param totalPerformancePercentage the totalPerformancePercentage to set
+    */
+   public synchronized void setTotalPerformancePercentage( double totalPerformancePercentage ) {
+      this.totalPerformancePercentage = totalPerformancePercentage;
+   }
 
    
    /**
@@ -66,6 +109,7 @@ public class SimulationResults {
    public synchronized Collection<SymbolPerformanceStatistics> getSymbolPerformances() {
       return symbolPerformances;
    }
+
    
 
 }
