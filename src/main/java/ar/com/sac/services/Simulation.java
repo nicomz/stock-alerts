@@ -28,12 +28,11 @@ public class Simulation {
    //simulation variables
    private String currentSymbol;
    private Quote currentLastQuote;
-   private List<Quote> allTheQuotes = new ArrayList<>();
+   private List<Quote> allTheQuotes = new ArrayList<>(); //all The quotes between from and to years
    private Map<String, Integer> indexPerSymbolMap  = new HashMap<>();
    private Map<String, List<Quote>> symbolToQuotesMap  = new HashMap<>();
    private Map<String, SimulatorRecord> positionsMap = new HashMap<>();
    private Map<String, SymbolPerformanceStatistics> performanceBySymbolMap = new HashMap<>();
-   private int previousAnalysisDays = 50;
    private SimulatorRecord lastSimulatorRecord;
 
    public Simulation( SimulatorParameters parameters, StockService stockService, ExpressionService expressionService ){
@@ -53,14 +52,14 @@ public class Simulation {
             currentSymbol = currentQuote.getSymbol();
             quotesAux = symbolToQuotesMap.get( currentSymbol );
             index = indexPerSymbolMap.get( currentSymbol );
-            stockSimulatorService.setSimulationQuotes( quotesAux.subList( quotesAux.size() - index, quotesAux.size() ));
+            stockSimulatorService.setSimulationQuotes( quotesAux.subList( index, quotesAux.size() ));
             currentLastQuote = stockSimulatorService.getStock( currentSymbol ).getLastQuote();
             if(!tryBuy()){
                if(!trySell()){
                   tryStopLoss();
                }
             }
-            indexPerSymbolMap.put( currentSymbol, ++index );
+            indexPerSymbolMap.put( currentSymbol, --index );
          }
          completeSimulationResults();
          return simulationResults;
@@ -94,11 +93,14 @@ public class Simulation {
 
       List<Quote> quotesAux;
       Calendar from = new GregorianCalendar(parameters.getYearFrom(),0,1);
-      Calendar to = new GregorianCalendar(parameters.getYearTo(),11,31);
+      from.add( Calendar.DATE, parameters.getPreviousDaysOfAnalysis() * -1 ); 
+      Calendar to = new GregorianCalendar(parameters.getYearTo()-1,11,31);
+      int indexInFromYear = 0;
       for(String symbol : parameters.getSymbols()){
          quotesAux = stockService.getHistory( symbol, from, to );
-         allTheQuotes.addAll( quotesAux.subList( 0, quotesAux.size() - previousAnalysisDays ) );
-         indexPerSymbolMap.put( symbol, previousAnalysisDays );
+         indexInFromYear = extractIndexInFromYear( quotesAux );
+         allTheQuotes.addAll( quotesAux.subList( 0, indexInFromYear + 1 ) );
+         indexPerSymbolMap.put( symbol, indexInFromYear );
          symbolToQuotesMap.put( symbol, quotesAux );
       }
       //allThQuotes must be sorted ASC
@@ -108,6 +110,17 @@ public class Simulation {
          public int compare( Quote o1, Quote o2 ) {
             return o1.getDate().compareTo( o2.getDate() );
          }} );
+   }
+   
+   private int extractIndexInFromYear( List<Quote> quotes ){
+      Quote quote;
+      for(int i = quotes.size() - 1; i >= 0 ; i--){
+         quote = quotes.get( i );
+         if(quote.getDate().get( Calendar.YEAR ) == parameters.getYearFrom()){
+            return i;
+         }
+      }
+      return 0;
    }
 
    private boolean tryStopLoss() throws IOException {

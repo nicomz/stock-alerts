@@ -15,7 +15,23 @@ public class SimulatorParameters {
    private String[] symbols;
    private int yearFrom = Calendar.getInstance().get(Calendar.YEAR) - 5;
    private int yearTo = Calendar.getInstance().get(Calendar.YEAR);
+   private int previousDaysOfAnalysis = 50;
    
+   /**
+    * @return the previousDaysOfAnalysis
+    */
+   public synchronized int getPreviousDaysOfAnalysis() {
+      return previousDaysOfAnalysis;
+   }
+
+   
+   /**
+    * @param previousDaysOfAnalysis the previousDaysOfAnalysis to set
+    */
+   public synchronized void setPreviousDaysOfAnalysis( int previousDaysOfAnalysis ) {
+      this.previousDaysOfAnalysis = previousDaysOfAnalysis;
+   }
+
    /**
     * @return the initialCapital
     */
@@ -173,6 +189,5 @@ public class SimulatorParameters {
    public synchronized void setYearTo( int yearTo ) {
       this.yearTo = yearTo;
    }
-
    
 }
