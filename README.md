@@ -154,6 +154,7 @@ Configure your financial alerts from your favorite stock market and receive noti
    "stopLossPercentage" :  2,
    "symbols": ["GOOGL","AAPL","TSLA"],
    "yearFrom": 2016,
-   "yearTo": 2017
+   "yearTo": 2017,
+   "previousDaysOfAnalysis": 365
 }
 ```
