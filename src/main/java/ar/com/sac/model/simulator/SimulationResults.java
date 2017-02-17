@@ -7,9 +7,10 @@ import java.util.List;
 public class SimulationResults {
    
    private double finalCapitalBalance;
+   private double finalLiquity;
    private double totalPerformance;
    private double totalPerformancePercentage;
-   private double finalLiquity;
+   private double totalBuyingOpportunitiesMissed;
    private Collection<SymbolPerformanceStatistics> symbolPerformances;
    private int quantityOfOperations;
    
@@ -96,6 +97,21 @@ public class SimulationResults {
     */
    public synchronized void setFinalLiquity( double finalLiquity ) {
       this.finalLiquity = finalLiquity;
+   }
+   
+   /**
+    * @return the totalBuyingOpportunitiesMissed
+    */
+   public synchronized double getTotalBuyingOpportunitiesMissed() {
+      return totalBuyingOpportunitiesMissed;
+   }
+
+   
+   /**
+    * @param totalBuyingOpportunitiesMissed the totalBuyingOpportunitiesMissed to set
+    */
+   public synchronized void setTotalBuyingOpportunitiesMissed( double totalBuyingOpportunitiesMissed ) {
+      this.totalBuyingOpportunitiesMissed = totalBuyingOpportunitiesMissed;
    }
 
    

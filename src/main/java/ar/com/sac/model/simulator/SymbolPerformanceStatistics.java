@@ -6,6 +6,7 @@ public class SymbolPerformanceStatistics {
    private double performance;
    private int positiveSales;
    private int negativeSales;
+   private int buyingOpportunitiesMissed;
    
    /**
     * @return the symbol
@@ -58,5 +59,18 @@ public class SymbolPerformanceStatistics {
    public synchronized void incNegativeSales(){
       negativeSales++;
    }
+
+   
+   /**
+    * @return the buyingOpportunitiesMissed
+    */
+   public synchronized int getBuyingOpportunitiesMissed() {
+      return buyingOpportunitiesMissed;
+   }
+   
+   public synchronized void incBuyingOpportunitiesMissed(){
+      buyingOpportunitiesMissed++;
+   }
+   
    
 }

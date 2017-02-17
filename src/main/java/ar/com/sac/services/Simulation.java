@@ -77,6 +77,11 @@ public class Simulation {
       simulationResults.setQuantityOfOperations( simulationResults.getRecords().size() - 1  );
       simulationResults.setTotalPerformance( lastSimulatorRecord.getCapitalBalance() - parameters.getInitialCapital() );
       simulationResults.setTotalPerformancePercentage( (lastSimulatorRecord.getCapitalBalance() - parameters.getInitialCapital())*100/parameters.getInitialCapital() );
+      int sumOpp = 0;
+      for(SymbolPerformanceStatistics sps : performanceBySymbolMap.values()){
+         sumOpp += sps.getBuyingOpportunitiesMissed();
+      }
+      simulationResults.setTotalBuyingOpportunitiesMissed( sumOpp );
    }
 
    private void initSimulationVariables() throws IOException {
@@ -218,6 +223,8 @@ public class Simulation {
             positionsMap.put( currentSymbol, buyRecord );
             lastSimulatorRecord = buyRecord;
             bought = true;
+         }else{
+            getSymbolPerformanceStatistics().incBuyingOpportunitiesMissed();
          }
       }
       return bought;
@@ -242,12 +249,7 @@ public class Simulation {
    }
    
    private void updateStatistics() {
-      SymbolPerformanceStatistics symbolPerformance = performanceBySymbolMap.get( currentSymbol );
-      if(symbolPerformance == null){
-         symbolPerformance = new SymbolPerformanceStatistics();
-         symbolPerformance.setSymbol( currentSymbol );
-         performanceBySymbolMap.put( currentSymbol, symbolPerformance );
-      }
+      SymbolPerformanceStatistics symbolPerformance = getSymbolPerformanceStatistics();
       
       if(lastSimulatorRecord.getOrderType().startsWith( "Sell" )){
          symbolPerformance.setPerformance( symbolPerformance.getPerformance() + lastSimulatorRecord.getOperationPerformance() );
@@ -257,6 +259,16 @@ public class Simulation {
             symbolPerformance.incNegativeSales();
          }
       }
+   }
+
+   private SymbolPerformanceStatistics getSymbolPerformanceStatistics() {
+      SymbolPerformanceStatistics symbolPerformance = performanceBySymbolMap.get( currentSymbol );
+      if(symbolPerformance == null){
+         symbolPerformance = new SymbolPerformanceStatistics();
+         symbolPerformance.setSymbol( currentSymbol );
+         performanceBySymbolMap.put( currentSymbol, symbolPerformance );
+      }
+      return symbolPerformance;
    }
 
    
@@ -282,7 +294,14 @@ public class Simulation {
    public synchronized SimulatorRecord getPosition( String symbol ) {
       return positionsMap.get( symbol );
    }
+
    
+   /**
+    * @return the parameters
+    */
+   public synchronized SimulatorParameters getParameters() {
+      return parameters;
+   }
    
 
 }

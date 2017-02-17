@@ -37,7 +37,9 @@ public class ExpressionService {
       double operationPerfomancePercentage = 0d;
       SimulatorRecord currentPosition = simulation.getPosition( simulation.getCurrentSymbol() );
       if( currentPosition != null ){
-         operationPerfomance = (simulation.getCurrentLastQuote().getClose().doubleValue() * currentPosition.getOrderAmount()) - currentPosition.getOrderTotalCost();
+         double sellValue = simulation.getCurrentLastQuote().getClose().doubleValue() * currentPosition.getOrderAmount();
+         double sellCommission = simulation.getParameters().getCommissionPercentage() * sellValue / 100d;
+         operationPerfomance = (sellValue - currentPosition.getOrderTotalCost()) - sellCommission;
          operationPerfomancePercentage = operationPerfomance * 100d / currentPosition.getOrderTotalCost();
       }
       
