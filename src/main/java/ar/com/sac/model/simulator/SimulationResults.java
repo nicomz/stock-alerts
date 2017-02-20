@@ -11,8 +11,10 @@ public class SimulationResults {
    private double totalPerformance;
    private double totalPerformancePercentage;
    private double totalBuyingOpportunitiesMissed;
-   private Collection<SymbolPerformanceStatistics> symbolPerformances;
    private int quantityOfOperations;
+   private int positiveSales;
+   private int negativeSales;
+   private Collection<SymbolPerformanceStatistics> symbolPerformances;
    
    private List<SimulatorRecord> records = new ArrayList<>();
    
@@ -113,6 +115,29 @@ public class SimulationResults {
    public synchronized void setTotalBuyingOpportunitiesMissed( double totalBuyingOpportunitiesMissed ) {
       this.totalBuyingOpportunitiesMissed = totalBuyingOpportunitiesMissed;
    }
+   
+   /**
+    * @return the positiveSales
+    */
+   public synchronized int getPositiveSales() {
+      return positiveSales;
+   }
+
+   /**
+    * @return the negativeSales
+    */
+   public synchronized int getNegativeSales() {
+      return negativeSales;
+   }
+   
+   public synchronized void incPositiveSales(){
+      positiveSales++;
+   }
+   
+   public synchronized void incNegativeSales(){
+      negativeSales++;
+   }
+
 
    
    public synchronized void setSymbolPerformances( Collection<SymbolPerformanceStatistics> values ) {

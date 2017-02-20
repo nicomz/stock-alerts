@@ -268,8 +268,10 @@ public class Simulation {
          symbolPerformance.setPerformance( symbolPerformance.getPerformance() + lastSimulatorRecord.getOperationPerformance() );
          if(lastSimulatorRecord.getOperationPerformance()>0){
             symbolPerformance.incPositiveSales();
+            simulationResults.incPositiveSales();
          }else{
             symbolPerformance.incNegativeSales();
+            simulationResults.incNegativeSales();
          }
       }
    }
