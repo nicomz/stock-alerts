@@ -96,8 +96,9 @@ public class Simulation {
       from.add( Calendar.DATE, parameters.getPreviousDaysOfAnalysis() * -1 ); 
       Calendar to = new GregorianCalendar(parameters.getYearTo()-1,11,31);
       int indexInFromYear = 0;
+      Map<String, List<Quote>> map = stockService.getHistory( parameters.getSymbols(), from, to );
       for(String symbol : parameters.getSymbols()){
-         quotesAux = stockService.getHistory( symbol, from, to );
+         quotesAux = map.get( symbol );
          indexInFromYear = extractIndexInFromYear( quotesAux );
          allTheQuotes.addAll( quotesAux.subList( 0, indexInFromYear + 1 ) );
          indexPerSymbolMap.put( symbol, indexInFromYear );
