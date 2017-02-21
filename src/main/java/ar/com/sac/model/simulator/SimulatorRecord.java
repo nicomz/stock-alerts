@@ -17,8 +17,9 @@ public class SimulatorRecord {
    private double orderPrice;
    private double orderTotalCost;
    private double operationPerformance;
+   private int operationDays;
    
-   /**
+   /*
     * @return the id
     */
    public synchronized int getId() {
@@ -168,5 +169,19 @@ public class SimulatorRecord {
    }
    
    
+   /**
+    * @return the operationDays
+    */
+   public synchronized int getOperationDays() {
+      return operationDays;
+   }
+
+   
+   /**
+    * @param operationDays the operationDays to set
+    */
+   public synchronized void setOperationDays( int operationDays ) {
+      this.operationDays = operationDays;
+   }
 
 }

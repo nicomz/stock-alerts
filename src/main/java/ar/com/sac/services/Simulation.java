@@ -199,8 +199,16 @@ public class Simulation {
       sellRecord.setOrderType( "Sell" );
       sellRecord.setCapitalBalance( lastSimulatorRecord.getCapitalBalance() + totalEarned - (positionRecord.getOrderAmount() * positionRecord.getOrderPrice()) );
       sellRecord.setOperationPerformance( sellRecord.getOrderTotalCost() - positionRecord.getOrderTotalCost() );
+      sellRecord.setOperationDays( daysBetween(positionRecord.getOrderDate(), sellRecord.getOrderDate()) );
       return sellRecord;
    }
+   
+   private int daysBetween(Calendar d1, Calendar d2) {
+      long t1 = d1.getTime().getTime();
+      long t2 = d2.getTime().getTime();
+      
+      return (int) ((t2 - t1) / (1000 * 60 * 60 * 24));
+  } 
 
    private boolean tryBuy() throws IOException {
       if( positionsMap.get( currentSymbol ) != null ) {
@@ -274,6 +282,7 @@ public class Simulation {
             symbolPerformance.incNegativeSales();
             simulationResults.incNegativeSales();
          }
+         symbolPerformance.addOperationDays(lastSimulatorRecord.getOperationDays());
       }
    }
 

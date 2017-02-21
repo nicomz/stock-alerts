@@ -7,6 +7,8 @@ public class SymbolPerformanceStatistics {
    private int positiveSales;
    private int negativeSales;
    private int buyingOpportunitiesMissed;
+   private int operationDays;
+   
    
    /**
     * @return the symbol
@@ -70,6 +72,31 @@ public class SymbolPerformanceStatistics {
    
    public synchronized void incBuyingOpportunitiesMissed(){
       buyingOpportunitiesMissed++;
+   }
+
+   
+   /**
+    * @return the operationDays
+    */
+   public synchronized int getOperationDays() {
+      return operationDays;
+   }
+
+   
+   /**
+    * @param operationDays the operationDays to set
+    */
+   public synchronized void addOperationDays( int operationDays ) {
+      this.operationDays += operationDays;
+   }
+   
+   public synchronized int getOperationDaysAverage() {
+      int operationsQuantity = positiveSales + negativeSales;
+      if( operationsQuantity == 0 ){
+         return operationsQuantity;
+      }
+      
+      return operationDays / operationsQuantity;
    }
    
    
