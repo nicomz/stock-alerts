@@ -19,6 +19,7 @@ import ar.com.sac.model.operations.OperatorAND;
 import ar.com.sac.model.operations.OperatorGREATERThan;
 import ar.com.sac.model.operations.OperatorLESSThan;
 import ar.com.sac.model.simulator.SimulatorRecord;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.stereotype.Service;
@@ -94,118 +95,72 @@ public class ExpressionService {
 
    private OperationTerm processOperationTerm( String expression, IStockService stockService ) {
       OperationTerm result;
+      List<Quote> quotes;
+      Quote quote;
+      String[] params = expression.split( "," );
       if(expression.startsWith( "EMA" )){
-         String[] params = expression.split( "," );
-         List<Quote> quotes;
-         try {
-            quotes = stockService.getHistory( params[1].replace( ")","" ) );
-         } catch (Exception e) {
-            quotes = new ArrayList<Quote>();
-            e.printStackTrace();
-         }
+         quotes = getQuotes( stockService, params[1].replace( ")","" ) );
          ExponentialMovingAverage ema = new ExponentialMovingAverage( Integer.parseInt( params[0].substring( 4 ) ), quotes );
          result = new OperationFormula( ema );
       }else if(expression.startsWith( "SMA" )){
-         String[] params = expression.split( "," );
-         List<Quote> quotes;
-         try {
-            quotes = stockService.getHistory( params[1].replace( ")","" ) );
-         } catch (Exception e) {
-            quotes = new ArrayList<Quote>();
-            e.printStackTrace();
-         }
+         quotes = getQuotes( stockService, params[1].replace( ")","" ) );
          SimpleMovingAverage sma = new SimpleMovingAverage( Integer.parseInt( params[0].substring( 4 ) ), quotes );
          result = new OperationFormula( sma );
       }else if(expression.startsWith( "RSI" )){
-         String[] params = expression.split( "," );
-         List<Quote> quotes;
-         try {
-            quotes = stockService.getHistory( params[1].replace( ")","" ) );
-         } catch (Exception e) {
-            quotes = new ArrayList<Quote>();
-            e.printStackTrace();
-         }
+         quotes = getQuotes( stockService, params[1].replace( ")","" ) );
          RelativeStrengthIndex rsi = new RelativeStrengthIndex( Integer.parseInt( params[0].substring( 4 ) ), quotes );
          result = new OperationFormula( rsi );
       }else if(expression.startsWith( "PRICE" )){
-         String symbolParam = expression.substring( 6 ).replace( ")","" );
-         Quote quote;
          try {
-            quote = stockService.getStock( symbolParam ).getLastQuote();
-         } catch (Exception e) {
+            quote = stockService.getStock( expression.substring( 6 ).replace( ")","" ) ).getLastQuote();
+         } catch (IOException e) {
             e.printStackTrace();
-            throw new RuntimeException( "No quote for symbol: " + symbolParam );
+            throw new RuntimeException( "Could not calculate price from symbol: " + expression.substring( 6 ).replace( ")","" ) );
          }
          result = new OperationFormula( new Price( quote ) );
       }else if(expression.startsWith( "VOLUME" )){
-         String symbolParam = expression.substring( 7 ).replace( ")","" );
-         Quote quote;
          try {
-            quote = stockService.getStock( symbolParam ).getLastQuote();
-         } catch (Exception e) {
+            quote = stockService.getStock( expression.substring( 7 ).replace( ")","" ) ).getLastQuote();
+         } catch (IOException e) {
             e.printStackTrace();
-            throw new RuntimeException( "No quote for symbol: " + symbolParam );
+            throw new RuntimeException( "Could not calculate volume from symbol: " + expression.substring( 7 ).replace( ")","" ) );
          }
          result = new OperationFormula( new Volume( quote ) );
       }else if(expression.startsWith( "MACD_SIGNAL_LINE" )){
-         String[] params = expression.split( "," );
-         List<Quote> quotes;
-         try {
-            quotes = stockService.getHistory( params[3].replace( ")","" ) );
-         } catch (Exception e) {
-            quotes = new ArrayList<Quote>();
-            e.printStackTrace();
-         }
+         quotes = getQuotes( stockService, params[3].replace( ")","" ) );
          MACDSignalLine macdSignal = new MACDSignalLine( Integer.parseInt( params[0].substring( 17 ) ), Integer.parseInt( params[1] ), Integer.parseInt( params[2] ), quotes );
          result = new OperationFormula( macdSignal );
       }else if(expression.startsWith( "MACD_HISTOGRAM" )){
-         String[] params = expression.split( "," );
-         List<Quote> quotes;
-         try {
-            quotes = stockService.getHistory( params[3].replace( ")","" ) );
-         } catch (Exception e) {
-            quotes = new ArrayList<Quote>();
-            e.printStackTrace();
-         }
+         quotes = getQuotes( stockService, params[3].replace( ")","" ) );
          MACDHistogram macdHistogram = new MACDHistogram( Integer.parseInt( params[0].substring( 15 ) ), Integer.parseInt( params[1] ), Integer.parseInt( params[2] ), quotes );
          result = new OperationFormula( macdHistogram );
       }else if(expression.startsWith( "MACD" )){
-         String[] params = expression.split( "," );
-         List<Quote> quotes;
-         try {
-            quotes = stockService.getHistory( params[2].replace( ")","" ) );
-         } catch (Exception e) {
-            quotes = new ArrayList<Quote>();
-            e.printStackTrace();
-         }
+         quotes = getQuotes( stockService, params[2].replace( ")","" ) );
          MACD macd = new MACD( Integer.parseInt( params[0].substring( 5 ) ), Integer.parseInt( params[1] ), quotes );
          result = new OperationFormula( macd );
       }else if(expression.startsWith( "STOCHASTIC_K" )){
-         String[] params = expression.split( "," );
-         List<Quote> quotes;
-         try {
-            quotes = stockService.getHistory( params[1].replace( ")","" ) );
-         } catch (Exception e) {
-            quotes = new ArrayList<Quote>();
-            e.printStackTrace();
-         }
+         quotes = getQuotes( stockService, params[1].replace( ")","" ) );
          StochasticOscillatorK sok = new StochasticOscillatorK( Integer.parseInt( params[0].substring( 13 ) ), quotes );
          result = new OperationFormula( sok );
       }else if(expression.startsWith( "STOCHASTIC_D" )){
-         String[] params = expression.split( "," );
-         List<Quote> quotes;
-         try {
-            quotes = stockService.getHistory( params[2].replace( ")","" ) );
-         } catch (Exception e) {
-            quotes = new ArrayList<Quote>();
-            e.printStackTrace();
-         }
+         quotes = getQuotes( stockService, params[2].replace( ")","" ) );
          StochasticOscillatorD sod = new StochasticOscillatorD( Integer.parseInt( params[0].substring( 13 )), Integer.parseInt( params[1] ) , quotes );
          result = new OperationFormula( sod );
       }else{
          result = new OperationConstantValue( Double.parseDouble( expression ) );
       }
       return result;
+   }
+   
+   private List<Quote> getQuotes(IStockService stockService,String symbol){
+      List<Quote> quotes;
+      try {
+         quotes = stockService.getHistory( symbol );
+      } catch (Exception e) {
+         quotes = new ArrayList<Quote>();
+         e.printStackTrace();
+      }
+      return quotes;
    }
 
 }

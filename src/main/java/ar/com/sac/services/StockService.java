@@ -26,6 +26,11 @@ public class StockService implements IStockService{
    public List<Quote> getHistory( String symbol ) throws IOException{
       List<HistoricalQuote> history = yahooFinanceService.getHistory( symbol );
       List<Quote> quotes = historyToQuotes( history );
+      //take the last quote from current day
+      Quote todayQuote = new Quote(yahooFinanceService.getStock( symbol ).getQuote());
+      if(quotes.get( 0 ).getDate().get( Calendar.DATE ) != todayQuote.getDate().get( Calendar.DATE )){
+         quotes.add( 0, todayQuote );
+      }
       return quotes;
    }
    
