@@ -158,3 +158,8 @@ Configure your financial alerts from your favorite stock market and receive noti
    "previousDaysOfAnalysis": 365
 }
 ```
+
+## Special Thanks
+* Alejandro Curci
+* Nicolás Zdanovicz
+* Hernán Soulages
