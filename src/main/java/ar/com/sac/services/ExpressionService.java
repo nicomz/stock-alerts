@@ -1,6 +1,7 @@
 package ar.com.sac.services;
 
 import ar.com.sac.model.Quote;
+import ar.com.sac.model.formulas.Average;
 import ar.com.sac.model.formulas.ExponentialMovingAverage;
 import ar.com.sac.model.formulas.MACD;
 import ar.com.sac.model.formulas.MACDHistogram;
@@ -8,8 +9,10 @@ import ar.com.sac.model.formulas.MACDSignalLine;
 import ar.com.sac.model.formulas.Price;
 import ar.com.sac.model.formulas.RelativeStrengthIndex;
 import ar.com.sac.model.formulas.SimpleMovingAverage;
+import ar.com.sac.model.formulas.StandardDeviation;
 import ar.com.sac.model.formulas.StochasticOscillatorD;
 import ar.com.sac.model.formulas.StochasticOscillatorK;
+import ar.com.sac.model.formulas.Variance;
 import ar.com.sac.model.formulas.Volume;
 import ar.com.sac.model.operations.OperationConstantValue;
 import ar.com.sac.model.operations.OperationFormula;
@@ -44,8 +47,8 @@ public class ExpressionService {
          operationPerfomancePercentage = operationPerfomance * 100d / currentPosition.getOrderTotalCost();
       }
       
-      expression = expression.replaceAll( "\\[OPERATION_PERFOMANCE\\]", String.valueOf( operationPerfomance ));
-      expression = expression.replaceAll( "\\[OPERATION_PERFOMANCE_PERCENTAGE\\]", String.valueOf( operationPerfomancePercentage ));
+      expression = expression.replaceAll( "\\[OPERATION_PERFORMANCE\\]", String.valueOf( operationPerfomance ));
+      expression = expression.replaceAll( "\\[OPERATION_PERFORMANCE_PERCENTAGE\\]", String.valueOf( operationPerfomancePercentage ));
       return expression;
    }
    
@@ -146,6 +149,15 @@ public class ExpressionService {
          quotes = getQuotes( stockService, params[2].replace( ")","" ) );
          StochasticOscillatorD sod = new StochasticOscillatorD( Integer.parseInt( params[0].substring( 13 )), Integer.parseInt( params[1] ) , quotes );
          result = new OperationFormula( sod );
+      }else if(expression.startsWith( "AVERAGE" )){
+         quotes = getQuotes(stockService, expression.substring( 8 ).replace( ")","" ));
+         result = new OperationFormula( new Average( quotes ) );
+      }else if(expression.startsWith( "VARIANCE" )){
+         quotes = getQuotes(stockService, expression.substring( 9 ).replace( ")","" ));
+         result = new OperationFormula( new Variance( quotes ) );
+      }else if(expression.startsWith( "STANDARD_DEVIATION" )){
+         quotes = getQuotes(stockService, expression.substring( 19 ).replace( ")","" ));
+         result = new OperationFormula( new StandardDeviation( quotes ) );
       }else{
          result = new OperationConstantValue( Double.parseDouble( expression ) );
       }

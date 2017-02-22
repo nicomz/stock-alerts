@@ -19,6 +19,21 @@ public class FormulaController {
    @Autowired
    private FormulaService formulaService;
    
+   @RequestMapping(value= "/average", method = RequestMethod.GET)
+   public ResponseEntity<BigDecimal> average(@RequestParam("symbol") String symbol ) throws IOException {
+      return new ResponseEntity<BigDecimal>( formulaService.getAverage( symbol ), HttpStatus.OK );
+   }
+   
+   @RequestMapping(value= "/variance", method = RequestMethod.GET)
+   public ResponseEntity<BigDecimal> variance(@RequestParam("symbol") String symbol ) throws IOException {
+      return new ResponseEntity<BigDecimal>( formulaService.getVariance( symbol ), HttpStatus.OK );
+   }
+   
+   @RequestMapping(value= "/sd", method = RequestMethod.GET)
+   public ResponseEntity<BigDecimal> standardDeviation(@RequestParam("symbol") String symbol ) throws IOException {
+      return new ResponseEntity<BigDecimal>( formulaService.getStandardDeviation( symbol ), HttpStatus.OK );
+   }
+   
    @RequestMapping(value= "/sma", method = RequestMethod.GET)
    public ResponseEntity<BigDecimal> sma(@RequestParam("period") int period, @RequestParam("symbol") String symbol ) throws IOException {
       return new ResponseEntity<BigDecimal>( formulaService.getSMA( period, symbol ), HttpStatus.OK );

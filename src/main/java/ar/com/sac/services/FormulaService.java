@@ -1,6 +1,7 @@
 package ar.com.sac.services;
 
 import ar.com.sac.model.Quote;
+import ar.com.sac.model.formulas.Average;
 import ar.com.sac.model.formulas.ExponentialMovingAverage;
 import ar.com.sac.model.formulas.MACD;
 import ar.com.sac.model.formulas.MACDHistogram;
@@ -8,8 +9,10 @@ import ar.com.sac.model.formulas.MACDSignalLine;
 import ar.com.sac.model.formulas.Price;
 import ar.com.sac.model.formulas.RelativeStrengthIndex;
 import ar.com.sac.model.formulas.SimpleMovingAverage;
+import ar.com.sac.model.formulas.StandardDeviation;
 import ar.com.sac.model.formulas.StochasticOscillatorD;
 import ar.com.sac.model.formulas.StochasticOscillatorK;
+import ar.com.sac.model.formulas.Variance;
 import ar.com.sac.model.formulas.Volume;
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -22,16 +25,29 @@ public class FormulaService {
    @Autowired
    private StockService stockService;
    
+   public BigDecimal getAverage(String symbol) throws IOException{
+      List<Quote> quotes  = stockService.getHistory( symbol );
+      return new Average( quotes ).calculate();
+   }
+   
+   public BigDecimal getVariance(String symbol) throws IOException{
+      List<Quote> quotes  = stockService.getHistory( symbol );
+      return new Variance( quotes ).calculate();
+   }
+   
+   public BigDecimal getStandardDeviation(String symbol) throws IOException{
+      List<Quote> quotes  = stockService.getHistory( symbol );
+      return new StandardDeviation( quotes ).calculate();
+   }
+   
    public BigDecimal getSMA(int period, String symbol) throws IOException{
-      List<Quote> quotes;
-      quotes = stockService.getHistory( symbol );
+      List<Quote> quotes = stockService.getHistory( symbol );
       SimpleMovingAverage sma = new SimpleMovingAverage( period, quotes );
       return sma.calculate();
    }
    
    public BigDecimal getEMA(int period, String symbol) throws IOException{
-      List<Quote> quotes;
-      quotes = stockService.getHistory( symbol );
+      List<Quote> quotes = stockService.getHistory( symbol );
       ExponentialMovingAverage ema = new ExponentialMovingAverage( period, quotes );
       return ema.calculate();
    }
