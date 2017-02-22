@@ -19,7 +19,7 @@ Configure your financial alerts from your favorite stock market and receive noti
 * MACD_HISTOGRAM(12,26,9,GOOGL)>0
 * STOCHASTIC_K(14,GOOGL)>STOCHASTIC_D(14,3,GOOGL)
 * PRICE(GOOGL)>AVERAGE(20,GOOGL)
-* BB_LOWER(20,2,GOOGL)&lt;PRICE(GOOGL)&&PRICE(GOOGL)&gt;SMA(20,GOOGL)&&BB_UPPER(20,2,GOOGL)&ltPRICE(GOOGL)
+* BB_LOWER(20,2,GOOGL)&lt;PRICE(GOOGL)&&PRICE(GOOGL)&gt;SMA(20,GOOGL)&&BB_UPPER(20,2,GOOGL)&lt;PRICE(GOOGL)
 
 ## Formulas
 * __SMA__: Simple Moving Average. Parameters: period and symbol.
