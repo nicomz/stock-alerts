@@ -2,6 +2,8 @@ package ar.com.sac.services;
 
 import ar.com.sac.model.Quote;
 import ar.com.sac.model.formulas.Average;
+import ar.com.sac.model.formulas.BollingerBandLower;
+import ar.com.sac.model.formulas.BollingerBandUpper;
 import ar.com.sac.model.formulas.ExponentialMovingAverage;
 import ar.com.sac.model.formulas.MACD;
 import ar.com.sac.model.formulas.MACDHistogram;
@@ -96,6 +98,16 @@ public class FormulaService {
       List<Quote> quotes = stockService.getHistory( symbol );
       StochasticOscillatorK osk = new StochasticOscillatorK( length, quotes );
       return osk.calculate();
+   }
+   
+   public BigDecimal getBollingerBandUpper(int period, int k, String symbol) throws IOException{
+      List<Quote> quotes = stockService.getHistory( symbol );
+      return new BollingerBandUpper( period, k, quotes ).calculate();
+   }
+   
+   public BigDecimal getBollingerBandLower(int period, int k, String symbol) throws IOException{
+      List<Quote> quotes = stockService.getHistory( symbol );
+      return new BollingerBandLower( period, k, quotes ).calculate();
    }
    
 

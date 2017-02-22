@@ -143,4 +143,32 @@ public class FormulaController {
       
       return new ResponseEntity<BigDecimal>( formulaService.getStochasticOscillatorK( length, symbol ), HttpStatus.OK );
    }
+   
+   @RequestMapping(value= "/bblower", method = RequestMethod.GET)
+   public ResponseEntity<BigDecimal> bbLower(@RequestParam(value = "period", required=false) Integer period, 
+                                          @RequestParam(value = "k", required=false) Integer k,
+                                          @RequestParam("symbol") String symbol ) throws IOException {
+      if(k == null){
+         k = 2;
+      }
+      if(period == null){
+         period = 20;
+      }
+      
+      return new ResponseEntity<BigDecimal>( formulaService.getBollingerBandLower( period, k, symbol ), HttpStatus.OK );
+   }
+   
+   @RequestMapping(value= "/bbupper", method = RequestMethod.GET)
+   public ResponseEntity<BigDecimal> bbUpper(@RequestParam(value = "period", required=false) Integer period, 
+                                          @RequestParam(value = "k", required=false) Integer k,
+                                          @RequestParam("symbol") String symbol ) throws IOException {
+      if(k == null){
+         k = 2;
+      }
+      if(period == null){
+         period = 20;
+      }
+      
+      return new ResponseEntity<BigDecimal>( formulaService.getBollingerBandUpper( period, k, symbol ), HttpStatus.OK );
+   }
 }

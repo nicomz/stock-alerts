@@ -2,6 +2,8 @@ package ar.com.sac.services;
 
 import ar.com.sac.model.Quote;
 import ar.com.sac.model.formulas.Average;
+import ar.com.sac.model.formulas.BollingerBandLower;
+import ar.com.sac.model.formulas.BollingerBandUpper;
 import ar.com.sac.model.formulas.ExponentialMovingAverage;
 import ar.com.sac.model.formulas.MACD;
 import ar.com.sac.model.formulas.MACDHistogram;
@@ -158,6 +160,12 @@ public class ExpressionService {
       }else if(expression.startsWith( "STANDARD_DEVIATION" )){
          quotes = getQuotes(stockService, params[1].replace( ")","" ));
          result = new OperationFormula( new StandardDeviation( Integer.parseInt( params[0].substring( 19 ) ), quotes ) );
+      }else if(expression.startsWith( "BB_LOWER" )){
+         quotes = getQuotes(stockService, params[2].replace( ")","" ));
+         result = new OperationFormula( new BollingerBandLower( Integer.parseInt( params[0].substring( 9 ) ), Integer.parseInt( params[1] ), quotes ) );
+      }else if(expression.startsWith( "BB_UPPER" )){
+         quotes = getQuotes(stockService, params[2].replace( ")","" ));
+         result = new OperationFormula( new BollingerBandUpper( Integer.parseInt( params[0].substring( 9 ) ), Integer.parseInt( params[1] ), quotes ) );
       }else{
          result = new OperationConstantValue( Double.parseDouble( expression ) );
       }
