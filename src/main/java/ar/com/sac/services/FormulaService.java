@@ -25,19 +25,19 @@ public class FormulaService {
    @Autowired
    private StockService stockService;
    
-   public BigDecimal getAverage(String symbol) throws IOException{
+   public BigDecimal getAverage(int period, String symbol) throws IOException{
       List<Quote> quotes  = stockService.getHistory( symbol );
-      return new Average( quotes ).calculate();
+      return new Average( period, quotes ).calculate();
    }
    
-   public BigDecimal getVariance(String symbol) throws IOException{
+   public BigDecimal getVariance(int period, String symbol) throws IOException{
       List<Quote> quotes  = stockService.getHistory( symbol );
-      return new Variance( quotes ).calculate();
+      return new Variance(period, quotes ).calculate();
    }
    
-   public BigDecimal getStandardDeviation(String symbol) throws IOException{
+   public BigDecimal getStandardDeviation(int period, String symbol) throws IOException{
       List<Quote> quotes  = stockService.getHistory( symbol );
-      return new StandardDeviation( quotes ).calculate();
+      return new StandardDeviation(period, quotes ).calculate();
    }
    
    public BigDecimal getSMA(int period, String symbol) throws IOException{

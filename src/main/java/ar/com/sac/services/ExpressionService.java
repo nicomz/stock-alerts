@@ -150,14 +150,14 @@ public class ExpressionService {
          StochasticOscillatorD sod = new StochasticOscillatorD( Integer.parseInt( params[0].substring( 13 )), Integer.parseInt( params[1] ) , quotes );
          result = new OperationFormula( sod );
       }else if(expression.startsWith( "AVERAGE" )){
-         quotes = getQuotes(stockService, expression.substring( 8 ).replace( ")","" ));
-         result = new OperationFormula( new Average( quotes ) );
+         quotes = getQuotes(stockService, params[1].replace( ")","" ));
+         result = new OperationFormula( new Average( Integer.parseInt( params[0].substring( 8 ) ), quotes ) );
       }else if(expression.startsWith( "VARIANCE" )){
-         quotes = getQuotes(stockService, expression.substring( 9 ).replace( ")","" ));
-         result = new OperationFormula( new Variance( quotes ) );
+         quotes = getQuotes(stockService, params[1].replace( ")","" ));
+         result = new OperationFormula( new Variance( Integer.parseInt( params[0].substring( 9 ) ), quotes ) );
       }else if(expression.startsWith( "STANDARD_DEVIATION" )){
-         quotes = getQuotes(stockService, expression.substring( 19 ).replace( ")","" ));
-         result = new OperationFormula( new StandardDeviation( quotes ) );
+         quotes = getQuotes(stockService, params[1].replace( ")","" ));
+         result = new OperationFormula( new StandardDeviation( Integer.parseInt( params[0].substring( 19 ) ), quotes ) );
       }else{
          result = new OperationConstantValue( Double.parseDouble( expression ) );
       }

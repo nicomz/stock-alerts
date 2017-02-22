@@ -20,18 +20,27 @@ public class FormulaController {
    private FormulaService formulaService;
    
    @RequestMapping(value= "/average", method = RequestMethod.GET)
-   public ResponseEntity<BigDecimal> average(@RequestParam("symbol") String symbol ) throws IOException {
-      return new ResponseEntity<BigDecimal>( formulaService.getAverage( symbol ), HttpStatus.OK );
+   public ResponseEntity<BigDecimal> average(@RequestParam(value = "period", required=false) Integer period, @RequestParam("symbol") String symbol ) throws IOException {
+      if(period == null){
+         period = 20;
+      }
+      return new ResponseEntity<BigDecimal>( formulaService.getAverage( period, symbol ), HttpStatus.OK );
    }
    
    @RequestMapping(value= "/variance", method = RequestMethod.GET)
-   public ResponseEntity<BigDecimal> variance(@RequestParam("symbol") String symbol ) throws IOException {
-      return new ResponseEntity<BigDecimal>( formulaService.getVariance( symbol ), HttpStatus.OK );
+   public ResponseEntity<BigDecimal> variance(@RequestParam(value = "period", required=false) Integer period, @RequestParam("symbol") String symbol ) throws IOException {
+      if(period == null){
+         period = 20;
+      }
+      return new ResponseEntity<BigDecimal>( formulaService.getVariance( period, symbol ), HttpStatus.OK );
    }
    
    @RequestMapping(value= "/sd", method = RequestMethod.GET)
-   public ResponseEntity<BigDecimal> standardDeviation(@RequestParam("symbol") String symbol ) throws IOException {
-      return new ResponseEntity<BigDecimal>( formulaService.getStandardDeviation( symbol ), HttpStatus.OK );
+   public ResponseEntity<BigDecimal> standardDeviation(@RequestParam(value = "period", required=false) Integer period, @RequestParam("symbol") String symbol ) throws IOException {
+      if(period == null){
+         period = 20;
+      }
+      return new ResponseEntity<BigDecimal>( formulaService.getStandardDeviation( period, symbol ), HttpStatus.OK );
    }
    
    @RequestMapping(value= "/sma", method = RequestMethod.GET)
