@@ -10,6 +10,12 @@ Configure your financial alerts from your favorite stock market and receive noti
 * RESTful API
 * Made in JAVA
 
+## Installation
+* Download the project
+* mvn package -DskipTests
+* Change values of application.properties
+* Deploy in your favorite application server (tomcat, etc)
+
 ## Valid expressions examples
 * PRICE(GOOGL)>318.5
 * SMA(50,GOOGL)>310
@@ -146,12 +152,6 @@ Configure your financial alerts from your favorite stock market and receive noti
    "opposedAlertId": "franSell"
 }
 ```
-
-### Installation
-* Download the project
-* mvn package -DskipTests
-* Change values of application.properties
-* Deploy in your favorite application server (tomcat, etc)
 
 ## Strategy Simulator
 
