@@ -18,6 +18,8 @@ Configure your financial alerts from your favorite stock market and receive noti
 * MACD(12,26,MIRG.BA)<MACD_SIGNAL_LINE(12,26,9,MIRG.BA)
 * MACD_HISTOGRAM(12,26,9,GOOGL)>0
 * STOCHASTIC_K(14,GOOGL)>STOCHASTIC_D(14,3,GOOGL)
+* PRICE(GOOGL)>AVERAGE(20,GOOGL)
+* BB_LOWER(20,2,GOOGL)&lt;PRICE(GOOGL)&&PRICE(GOOGL)&gt;SMA(20,GOOGL)&&BB_UPPER(20,2,GOOGL)&ltPRICE(GOOGL)
 
 ## Formulas
 * __SMA__: Simple Moving Average. Parameters: period and symbol.
@@ -30,6 +32,11 @@ Configure your financial alerts from your favorite stock market and receive noti
 * __MACD_HISTOGRAM__: Histogram value of Moving Average Convergence/Divergence. Parameters: fastPeriod, slowPeriod, signalPeriod and symbol.
 * __STOCHASTIC_K__: Stochastic Oscillator %K value. Parameters: length and symbol.
 * __STOCHASTIC_D__: Stochastic Oscillator %D is a X-period simple moving average of %K. Parameters: length, period and symbol.
+* __AVERAGE__: Price average in a period. Parameters: period and symbol.
+* __VARIANCE__: Price variance in a period. Parameters: period and symbol.
+* __STANDARD_DEVIATION__: Price standard deviation in a period. Parameters: period and symbol.
+* __BB_LOWER__: Lower Bollinger Band (trademark). Parameters: period, k and symbol.
+* __BB_UPPER__: Upper Bollinger Band (trademark). Parameters: period, k and symbol.
 
 
 ## Operators
@@ -53,6 +60,12 @@ Configure your financial alerts from your favorite stock market and receive noti
 #### Formulas
 * GET /stock-alerts/formulas/price?symbol=GOOGL
 * GET /stock-alerts/formulas/volume?symbol=GOOGL
+* GET /stock-alerts/formulas/average?period=20&symbol=GOOGL 
+  * period parameter is optional, default value is 20
+* GET /stock-alerts/formulas/sd?period=20&symbol=GOOGL 
+  * period parameter is optional, default value is 20
+* GET /stock-alerts/formulas/variance?period=20&symbol=GOOGL 
+  * period parameter is optional, default value is 20
 * GET /stock-alerts/formulas/sma?period=50&symbol=GOOGL
 * GET /stock-alerts/formulas/ema?period=14&symbol=GOOGL
 * GET /stock-alerts/formulas/rsi?period=14&symbol=GOOGL 
@@ -73,6 +86,12 @@ Configure your financial alerts from your favorite stock market and receive noti
 * GET /stock-alerts/formulas/stochasticd?length=14&period=3&symbol=GOOGL 
   * length parameter is optional, default value is 14
   * period parameter is optional, default value is 3
+* GET /stock-alerts/formulas/bblower?period=20&k=2&symbol=GOOGL 
+  * period parameter is optional, default value is 20
+  * k parameter is optional, default value is 2
+* GET /stock-alerts/formulas/bbupper?period=20&k=2&symbol=GOOGL 
+  * period parameter is optional, default value is 20
+  * k parameter is optional, default value is 2
 
 #### Alerts
 * GET /stock-alerts/alerts
