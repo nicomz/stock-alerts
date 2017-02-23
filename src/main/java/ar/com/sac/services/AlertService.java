@@ -164,15 +164,16 @@ public class AlertService {
       return alertDAO.getAlertsBySymbol(symbol);
    }
    
-   
    private void normalizeId( Alert alert ) {
-      alert.setId( toCamelCase( alert.getId()) );
+      if(alert.getId().contains( " " )){
+         alert.setId( toCamelCase( alert.getId() ) );
+      }
    }
    
    private String toCamelCase(final String init) {
       if (init==null)
           return null;
-
+      
       final StringBuilder ret = new StringBuilder(init.length());
       String word;
       String[] split = init.split(" ");
