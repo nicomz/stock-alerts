@@ -115,9 +115,10 @@ public class AlertService {
 
    @Transactional
    public void saveAlert( Alert newAlert ) {
+      normalizeId( newAlert );
       alertDAO.persist( newAlert );
    }
-
+   
    @Transactional
    public void deleteAlertById( String alertId ) {
       Alert alertToDelete = alertDAO.findById( alertId );
@@ -128,6 +129,10 @@ public class AlertService {
 
    @Transactional
    public void updateAlert( Alert alert ) {
+      normalizeId( alert );
+      if( getAlertById( alert.getId() ) == null ){
+         throw new RuntimeException( "It doesn't exist an alert with id: " + alert.getId() );
+      }
       alertDAO.update( alert );
    }
 
@@ -158,5 +163,33 @@ public class AlertService {
    public List<Alert> getAlertsBySymbol( String symbol ) {
       return alertDAO.getAlertsBySymbol(symbol);
    }
+   
+   
+   private void normalizeId( Alert alert ) {
+      alert.setId( toCamelCase( alert.getId()) );
+   }
+   
+   private String toCamelCase(final String init) {
+      if (init==null)
+          return null;
+
+      final StringBuilder ret = new StringBuilder(init.length());
+      String word;
+      String[] split = init.split(" ");
+      for ( int i=0 ; i < split.length ; i++ ) {
+         word = split[i];
+         if (word.isEmpty()) {
+            continue;
+         }
+         if( i == 0 ){
+            ret.append( word.toLowerCase() );
+         }else{
+            ret.append(word.substring(0, 1).toUpperCase());
+            ret.append(word.substring(1).toLowerCase());
+         }
+      }
+
+      return ret.toString();
+  }
 
 }
