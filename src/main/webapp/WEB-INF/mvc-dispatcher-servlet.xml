@@ -16,5 +16,6 @@
       </property>
    </bean>
    
+   <mvc:resources mapping="/pages/**" location="/pages/"  cache-period="10000" />
    
 </beans>

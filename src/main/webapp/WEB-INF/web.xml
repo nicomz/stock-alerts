@@ -26,5 +26,9 @@
    <servlet-mapping>
       <servlet-name>mvc-dispatcher</servlet-name>
       <url-pattern>/</url-pattern>
-   </servlet-mapping> 
+   </servlet-mapping>
+   
+   <welcome-file-list>
+       <welcome-file>pages/index.html</welcome-file>
+   </welcome-file-list>
 </web-app>

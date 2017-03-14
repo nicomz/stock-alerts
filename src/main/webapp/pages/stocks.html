@@ -1,0 +1,42 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html xmlns:uiform>
+   <head>
+      <!---------------------------------------------------------->
+      <!----------------- HOME DE LA APLICACION ------------------>
+      <!---------------------------------------------------------->
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+      
+       <!-- Latest compiled and minified CSS -->
+      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+      <!-- jQuery library -->
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+      <!-- Latest compiled JavaScript -->
+      <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+      <script language="Javascript">
+         
+         function startup(){
+           
+         }
+
+      </script>
+   </head>
+   
+   <body onload="startup();" style="overflow: hidden; margin: 0px; border: 0px;" >
+   <div class="container">
+      <h2>Stocks</h2>
+	   <form>
+		  <div class="form-group">
+		    <label for="tickerSymbol">Ticker Symbol</label>
+		    <input type="text" class="form-control" id="tickerSymbol" aria-describedby="symbolHelp" placeholder="TSLA">
+		    <small id="symbolHelp" class="form-text text-muted">Use Yahoo notation (".BA" for Buenos Aires stocks)</small>
+		  </div>
+		  <div class="checkbox">
+	        <label><input type="checkbox"> Get history</label>
+	     </div>
+		  <button type="submit" class="btn btn-primary">Consult</button>
+		</form>
+	</div>
+	
+   </body>
+</html>
