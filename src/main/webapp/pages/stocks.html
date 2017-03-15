@@ -12,6 +12,8 @@
       <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
       <!-- Latest compiled JavaScript -->
       <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+      <!-- Valildator -->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/1000hz-bootstrap-validator/0.11.9/validator.min.js"></script>
 
       <script language="Javascript">
          
@@ -19,23 +21,46 @@
            
          }
 
+         function consult( event ){
+             //avoids default submit process
+             event.preventDefault();
+        	    var tickerInput = document.getElementById( "tickerSymbol" );
+        	    var historyCheckbox = document.getElementById( "historyCheckbox" );
+             var url = "/stock-alerts/stocks" + (historyCheckbox.checked? "/history" :"") + "?symbol=" + tickerInput.value;
+             httpGetAsync( url, function( result ){ document.getElementById( "resultDiv" ).innerHTML = result;  } );
+         }
+
+         function httpGetAsync(theUrl, callback){
+             var xmlHttp = new XMLHttpRequest();
+             xmlHttp.onreadystatechange = function() { 
+                 if (xmlHttp.readyState == 4 && xmlHttp.status == 200)
+                     callback(xmlHttp.responseText);
+             }
+             xmlHttp.open("GET", theUrl, true); // true for asynchronous 
+             xmlHttp.send(null);
+         }
+
       </script>
    </head>
    
-   <body onload="startup();" style="overflow: hidden; margin: 0px; border: 0px;" >
+   <body onload="startup();" style="overflow: auto; margin: 0px; border: 0px;" >
    <div class="container">
       <h2>Stocks</h2>
-	   <form>
+	   <form data-toggle="validator" name="stocksForm" id="stocksForm" onsubmit="consult(event)">
 		  <div class="form-group">
 		    <label for="tickerSymbol">Ticker Symbol</label>
-		    <input type="text" class="form-control" id="tickerSymbol" aria-describedby="symbolHelp" placeholder="TSLA">
+		    <input type="text" class="form-control" id="tickerSymbol" aria-describedby="symbolHelp" placeholder="TSLA" required data-minlength="1">
 		    <small id="symbolHelp" class="form-text text-muted">Use Yahoo notation (".BA" for Buenos Aires stocks)</small>
 		  </div>
 		  <div class="checkbox">
-	        <label><input type="checkbox"> Get history</label>
+	        <label><input id="historyCheckbox" type="checkbox"> Get history</label>
 	     </div>
-		  <button type="submit" class="btn btn-primary">Consult</button>
+	     <div class="form-group">
+		    <button type="submit" class="btn btn-primary">Consult</button>
+		  </div>
 		</form>
+		<div id="resultDiv">
+		</div>
 	</div>
 	
    </body>
