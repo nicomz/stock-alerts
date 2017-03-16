@@ -12,17 +12,500 @@
       <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
       <!-- Latest compiled JavaScript -->
       <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+      <!-- Valildator -->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/1000hz-bootstrap-validator/0.11.9/validator.min.js"></script>
 
+      <script language="Javascript" src="/stock-alerts/pages/js/httpUtils.js"> </script>
+      
       <script language="Javascript">
          
          function startup(){
            
          }
 
+         function calculatePrice( event ){
+             //avoids default submit process
+             event.preventDefault();
+             var tickerInput = document.getElementById( "priceTickerSymbol" );
+             var url = "/stock-alerts/formulas/price?symbol=" + tickerInput.value;
+             httpGetAsync( url, function( result ){ document.getElementById( "priceResult" ).innerHTML = '$' + result;  } );
+         }
+
+         function calculateVolume( event ){
+             //avoids default submit process
+             event.preventDefault();
+             var tickerInput = document.getElementById( "volumeTickerSymbol" );
+             var url = "/stock-alerts/formulas/volume?symbol=" + tickerInput.value;
+             httpGetAsync( url, function( result ){ document.getElementById( "volumeResult" ).innerHTML = result;  } );
+         }
+
+         function calculateAverage( event ){
+             //avoids default submit process
+             event.preventDefault();
+             var tickerInput = document.getElementById( "averageTickerSymbol" );
+             var periodInput = document.getElementById( "averagePeriod" );
+             var url = "/stock-alerts/formulas/average?symbol=" + tickerInput.value + "&period=" + periodInput.value;
+             httpGetAsync( url, function( result ){ document.getElementById( "averageResult" ).innerHTML = '$' + result;  } );
+         }
+
+         function calculateVariance( event ){
+             //avoids default submit process
+             event.preventDefault();
+             var tickerInput = document.getElementById( "varianceTickerSymbol" );
+             var periodInput = document.getElementById( "variancePeriod" );
+             var url = "/stock-alerts/formulas/variance?symbol=" + tickerInput.value + "&period=" + periodInput.value;
+             httpGetAsync( url, function( result ){ document.getElementById( "varianceResult" ).innerHTML = result;  } );
+         }
+
+         function calculateStandardDeviation( event ){
+             //avoids default submit process
+             event.preventDefault();
+             var tickerInput = document.getElementById( "standardDeviationTickerSymbol" );
+             var periodInput = document.getElementById( "standardDeviationPeriod" );
+             var url = "/stock-alerts/formulas/sd?symbol=" + tickerInput.value + "&period=" + periodInput.value;
+             httpGetAsync( url, function( result ){ document.getElementById( "standardDeviationResult" ).innerHTML = '$' + result;  } );
+         }
+
+         function calculateSMA( event ){
+             //avoids default submit process
+             event.preventDefault();
+             var tickerInput = document.getElementById( "smaTickerSymbol" );
+             var periodInput = document.getElementById( "smaPeriod" );
+             var url = "/stock-alerts/formulas/sma?symbol=" + tickerInput.value + "&period=" + periodInput.value;
+             httpGetAsync( url, function( result ){ document.getElementById( "smaResult" ).innerHTML = '$' + result;  } );
+         }
+
+         function calculateEMA( event ){
+             //avoids default submit process
+             event.preventDefault();
+             var tickerInput = document.getElementById( "emaTickerSymbol" );
+             var periodInput = document.getElementById( "emaPeriod" );
+             var url = "/stock-alerts/formulas/ema?symbol=" + tickerInput.value + "&period=" + periodInput.value;
+             httpGetAsync( url, function( result ){ document.getElementById( "emaResult" ).innerHTML = '$' + result;  } );
+         }
+
+         function calculateRSI( event ){
+             //avoids default submit process
+             event.preventDefault();
+             var tickerInput = document.getElementById( "rsiTickerSymbol" );
+             var periodInput = document.getElementById( "rsiPeriod" );
+             var url = "/stock-alerts/formulas/rsi?symbol=" + tickerInput.value + "&period=" + periodInput.value;
+             httpGetAsync( url, function( result ){ document.getElementById( "rsiResult" ).innerHTML = result;  } );
+         }
+
+         function calculateMACD( event ){
+             //avoids default submit process
+             event.preventDefault();
+             var tickerInput = document.getElementById( "macdTickerSymbol" );
+             var fastPeriodInput = document.getElementById( "macdFastPeriod" );
+             var slowPeriodInput = document.getElementById( "macdSlowPeriod" );
+             var url = "/stock-alerts/formulas/macd?symbol=" + tickerInput.value + "&fastPeriod=" + fastPeriodInput.value + "&slowPeriod=" + slowPeriodInput.value;
+             httpGetAsync( url, function( result ){ document.getElementById( "macdResult" ).innerHTML = result;  } );
+         }
+
+         function calculateMACDSL( event ){
+             //avoids default submit process
+             event.preventDefault();
+             var tickerInput = document.getElementById( "macdslTickerSymbol" );
+             var fastPeriodInput = document.getElementById( "macdslFastPeriod" );
+             var slowPeriodInput = document.getElementById( "macdslSlowPeriod" );
+             var signalPeriodInput = document.getElementById( "macdslSignalPeriod" );
+             var url = "/stock-alerts/formulas/macdsignalline?symbol=" + tickerInput.value + "&fastPeriod=" + fastPeriodInput.value + "&slowPeriod=" + slowPeriodInput.value + "&signalPeriod=" + signalPeriodInput.value;
+             httpGetAsync( url, function( result ){ document.getElementById( "macdslResult" ).innerHTML = result;  } );
+         }
+
+         function calculateMACDHistogram( event ){
+             //avoids default submit process
+             event.preventDefault();
+             var tickerInput = document.getElementById( "macdHistogramTickerSymbol" );
+             var fastPeriodInput = document.getElementById( "macdHistogramFastPeriod" );
+             var slowPeriodInput = document.getElementById( "macdHistogramSlowPeriod" );
+             var signalPeriodInput = document.getElementById( "macdHistogramSignalPeriod" );
+             var url = "/stock-alerts/formulas/macdhistogram?symbol=" + tickerInput.value + "&fastPeriod=" + fastPeriodInput.value + "&slowPeriod=" + slowPeriodInput.value + "&signalPeriod=" + signalPeriodInput.value;
+             httpGetAsync( url, function( result ){ document.getElementById( "macdHistogramResult" ).innerHTML = result;  } );
+         }
+
+         function calculateStochasticD( event ){
+             //avoids default submit process
+             event.preventDefault();
+             var tickerInput = document.getElementById( "stochasticDTickerSymbol" );
+             var lengthInput = document.getElementById( "stochasticDLength" );
+             var periodInput = document.getElementById( "stochasticDPeriod" );
+             var url = "/stock-alerts/formulas/stochasticd?symbol=" + tickerInput.value + "&length=" + lengthInput.value + "&period=" + periodInput.value;
+             httpGetAsync( url, function( result ){ document.getElementById( "stochasticDResult" ).innerHTML = result;  } );
+         }
+
+         function calculateStochasticK( event ){
+             //avoids default submit process
+             event.preventDefault();
+             var tickerInput = document.getElementById( "stochasticKTickerSymbol" );
+             var lengthInput = document.getElementById( "stochasticKLength" );
+             var url = "/stock-alerts/formulas/stochastick?symbol=" + tickerInput.value + "&length=" + lengthInput.value;
+             httpGetAsync( url, function( result ){ document.getElementById( "stochasticKResult" ).innerHTML = result;  } );
+         }
+
+         function calculateBBLower( event ){
+             //avoids default submit process
+             event.preventDefault();
+             var tickerInput = document.getElementById( "bbLowerTickerSymbol" );
+             var kInput = document.getElementById( "bbLowerK" );
+             var periodInput = document.getElementById( "bbLowerPeriod" );
+             var url = "/stock-alerts/formulas/bblower?symbol=" + tickerInput.value + "&k=" + kInput.value + "&period=" + periodInput.value;
+             httpGetAsync( url, function( result ){ document.getElementById( "bbLowerResult" ).innerHTML = result;  } );
+         }
+
+         function calculateBBUpper( event ){
+             //avoids default submit process
+             event.preventDefault();
+             var tickerInput = document.getElementById( "bbUpperTickerSymbol" );
+             var kInput = document.getElementById( "bbUpperK" );
+             var periodInput = document.getElementById( "bbUpperPeriod" );
+             var url = "/stock-alerts/formulas/bbupper?symbol=" + tickerInput.value + "&k=" + kInput.value + "&period=" + periodInput.value;
+             httpGetAsync( url, function( result ){ document.getElementById( "bbUpperResult" ).innerHTML = result;  } );
+         }
+
       </script>
    </head>
    
-   <body onload="startup();" style="overflow: hidden; margin: 0px; border: 0px;" >
-   Formulas
+   <body onload="startup();" style="margin: 0px; border: 0px;" >
+	   <div class="container">
+	      <h2>Formulas</h2>
+	      
+	      <div class="panel panel-default">
+            <div class="panel-heading">Price</div>
+            <div class="panel-body">
+               <form data-toggle="validator" class="form-inline" name="priceForm"  id="priceForm" 
+                     onsubmit="calculatePrice(event)">
+                  <div class="form-group">
+                    <label for="priceTickerSymbol">Ticker Symbol</label>
+                    <input type="text" class="form-control" id="priceTickerSymbol" placeholder="TSLA" required data-minlength="1">
+                  </div>
+                  <button type="submit" class="btn btn-primary">Calculate</button>
+                  <div class="form-group" id="priceResult"></div>
+               </form>
+            </div>
+         </div>
+         
+         <div class="panel panel-default">
+            <div class="panel-heading">Volume</div>
+            <div class="panel-body">
+               <form data-toggle="validator" class="form-inline" name="volumeForm"  id="volumeForm" 
+                     onsubmit="calculateVolume(event)">
+                 <div class="form-group">
+                   <label for="volumeTickerSymbol">Ticker Symbol</label>
+                   <input type="text" class="form-control" id="volumeTickerSymbol" placeholder="TSLA" required data-minlength="1">
+                 </div>
+               <button type="submit" class="btn btn-primary">Calculate</button>
+                 <div class="form-group" id="volumeResult"></div>
+               </form>
+            </div>
+         </div>
+	      
+	      <div class="panel panel-default">
+		      <div class="panel-heading">Average</div>
+		      <div class="panel-body">
+			      <form data-toggle="validator" class="form-inline" name="averageForm"  id="averageForm" 
+			            onsubmit="calculateAverage(event)">
+			        <div class="form-group">
+			          <label for="averageTickerSymbol">Ticker Symbol</label>
+			          <input type="text" class="form-control" id="averageTickerSymbol" placeholder="TSLA" required data-minlength="1">
+			        </div>
+			        <div class="form-group">
+						  <label for="example-number-input">Period</label>
+						  <input class="form-control" type="number"  min="1" value="20" id="averagePeriod">
+						</div>
+			        <div class="form-group">
+			          <button type="submit" class="btn btn-primary">Calculate</button>
+			        </div>
+			        <div class="form-group" id="averageResult"></div>
+			      </form>
+		      </div>
+	      </div>
+	      
+	      <div class="panel panel-default">
+            <div class="panel-heading">Variance</div>
+            <div class="panel-body">
+               <form data-toggle="validator" class="form-inline" name="varianceForm"  id="varianceForm" 
+                     onsubmit="calculateVariance(event)">
+                 <div class="form-group">
+                   <label for="varianceTickerSymbol">Ticker Symbol</label>
+                   <input type="text" class="form-control" id="varianceTickerSymbol" placeholder="TSLA" required data-minlength="1">
+                 </div>
+                 <div class="form-group">
+                    <label for="example-number-input">Period</label>
+                    <input class="form-control" type="number"  min="1" value="20" id="variancePeriod">
+                  </div>
+                 <div class="form-group">
+                   <button type="submit" class="btn btn-primary">Calculate</button>
+                 </div>
+                 <div class="form-group" id="varianceResult"></div>
+               </form>
+            </div>
+         </div>
+         
+         <div class="panel panel-default">
+            <div class="panel-heading">Standard Deviation</div>
+            <div class="panel-body">
+               <form data-toggle="validator" class="form-inline" name="standardDeviationForm"  id="standardDeviationForm" 
+                     onsubmit="calculateStandardDeviation(event)">
+                 <div class="form-group">
+                   <label for="standardDeviationTickerSymbol">Ticker Symbol</label>
+                   <input type="text" class="form-control" id="standardDeviationTickerSymbol" placeholder="TSLA" required data-minlength="1">
+                 </div>
+                 <div class="form-group">
+                    <label for="example-number-input">Period</label>
+                    <input class="form-control" type="number"  min="1" value="20" id="standardDeviationPeriod">
+                  </div>
+                 <div class="form-group">
+                   <button type="submit" class="btn btn-primary">Calculate</button>
+                 </div>
+                 <div class="form-group" id="standardDeviationResult"></div>
+               </form>
+            </div>
+         </div>
+         
+         <div class="panel panel-default">
+            <div class="panel-heading">Simple Moving Average - SMA</div>
+            <div class="panel-body">
+               <form data-toggle="validator" class="form-inline" name="smaForm"  id="smaForm" 
+                     onsubmit="calculateSMA(event)">
+                 <div class="form-group">
+                   <label for="smaTickerSymbol">Ticker Symbol</label>
+                   <input type="text" class="form-control" id="smaTickerSymbol" placeholder="TSLA" required data-minlength="1">
+                 </div>
+                 <div class="form-group">
+                    <label for="example-number-input">Period</label>
+                    <input class="form-control" type="number"  min="1" value="20" id="smaPeriod">
+                  </div>
+                 <div class="form-group">
+                   <button type="submit" class="btn btn-primary">Calculate</button>
+                 </div>
+                 <div class="form-group" id="smaResult"></div>
+               </form>
+            </div>
+         </div>
+         
+         <div class="panel panel-default">
+            <div class="panel-heading">Exponential Moving Average - EMA</div>
+            <div class="panel-body">
+               <form data-toggle="validator" class="form-inline" name="emaForm"  id="emaForm" 
+                     onsubmit="calculateEMA(event)">
+                 <div class="form-group">
+                   <label for="emaTickerSymbol">Ticker Symbol</label>
+                   <input type="text" class="form-control" id="emaTickerSymbol" placeholder="TSLA" required data-minlength="1">
+                 </div>
+                 <div class="form-group">
+                    <label for="example-number-input">Period</label>
+                    <input class="form-control" type="number"  min="1" value="20" id="emaPeriod">
+                  </div>
+                 <div class="form-group">
+                   <button type="submit" class="btn btn-primary">Calculate</button>
+                 </div>
+                 <div class="form-group" id="emaResult"></div>
+               </form>
+            </div>
+         </div>
+         
+         <div class="panel panel-default">
+            <div class="panel-heading">Relative Strength Index - RSI</div>
+            <div class="panel-body">
+               <form data-toggle="validator" class="form-inline" name="rsiForm"  id="rsiForm" 
+                     onsubmit="calculateRSI(event)">
+                 <div class="form-group">
+                   <label for="rsiTickerSymbol">Ticker Symbol</label>
+                   <input type="text" class="form-control" id="rsiTickerSymbol" placeholder="TSLA" required data-minlength="1">
+                 </div>
+                 <div class="form-group">
+                    <label for="example-number-input">Period</label>
+                    <input class="form-control" type="number"  min="1" value="14" id="rsiPeriod">
+                  </div>
+                 <div class="form-group">
+                   <button type="submit" class="btn btn-primary">Calculate</button>
+                 </div>
+                 <div class="form-group" id="rsiResult"></div>
+               </form>
+            </div>
+         </div>
+         
+         <div class="panel panel-default">
+            <div class="panel-heading">Moving Average Convergence/Divergence - MACD</div>
+            <div class="panel-body">
+               <form data-toggle="validator" class="form-inline" name="macdForm"  id="macdForm" 
+                     onsubmit="calculateMACD(event)">
+                 <div class="form-group">
+                   <label for="macdTickerSymbol">Ticker Symbol</label>
+                   <input type="text" class="form-control" id="macdTickerSymbol" placeholder="TSLA" required data-minlength="1">
+                 </div>
+                 <div class="form-group">
+                    <label for="example-number-input">Fast Period</label>
+                    <input class="form-control" type="number"  min="1" value="12" id="macdFastPeriod">
+                 </div>
+             <div class="form-group">
+                    <label for="example-number-input">Slow Period</label>
+                    <input class="form-control" type="number"  min="1" value="26" id="macdSlowPeriod">
+                 </div>
+                 <div class="form-group">
+                   <button type="submit" class="btn btn-primary">Calculate</button>
+                 </div>
+                 <div class="form-group" id="macdResult"></div>
+               </form>
+            </div>
+         </div>
+         
+         <div class="panel panel-default">
+            <div class="panel-heading">MACD Signal Line</div>
+            <div class="panel-body">
+               <form data-toggle="validator" class="form-inline" name="macdslForm"  id="macdslForm" 
+                     onsubmit="calculateMACDSL(event)">
+                 <div class="form-group">
+                   <label for="macdslTickerSymbol">Ticker Symbol</label>
+                   <input type="text" class="form-control" id="macdslTickerSymbol" placeholder="TSLA" required data-minlength="1">
+                 </div>
+                 <div class="form-group">
+                    <label for="example-number-input">Fast Period</label>
+                    <input class="form-control" type="number"  min="1" value="12" id="macdslFastPeriod">
+                 </div>
+             <div class="form-group">
+                    <label for="example-number-input">Slow Period</label>
+                    <input class="form-control" type="number"  min="1" value="26" id="macdslSlowPeriod">
+                 </div>
+             <div class="form-group">
+                    <label for="example-number-input">Signal Period</label>
+                    <input class="form-control" type="number"  min="1" value="9" id="macdslSignalPeriod">
+                 </div>
+                 <div class="form-group">
+                   <button type="submit" class="btn btn-primary">Calculate</button>
+                 </div>
+                 <div class="form-group" id="macdslResult"></div>
+               </form>
+            </div>
+         </div>
+         
+         <div class="panel panel-default">
+            <div class="panel-heading">MACD Histogram</div>
+            <div class="panel-body">
+               <form data-toggle="validator" class="form-inline" name="macdHistogramForm"  id="macdHistogramForm" 
+                     onsubmit="calculateMACDHistogram(event)">
+                 <div class="form-group">
+                   <label for="macdHistogramTickerSymbol">Ticker Symbol</label>
+                   <input type="text" class="form-control" id="macdHistogramTickerSymbol" placeholder="TSLA" required data-minlength="1">
+                 </div>
+                 <div class="form-group">
+                    <label for="example-number-input">Fast Period</label>
+                    <input class="form-control" type="number"  min="1" value="12" id="macdHistogramFastPeriod">
+                 </div>
+             <div class="form-group">
+                    <label for="example-number-input">Slow Period</label>
+                    <input class="form-control" type="number"  min="1" value="26" id="macdHistogramSlowPeriod">
+                 </div>
+             <div class="form-group">
+                    <label for="example-number-input">Signal Period</label>
+                    <input class="form-control" type="number"  min="1" value="9" id="macdHistogramSignalPeriod">
+                 </div>
+                 <div class="form-group">
+                   <button type="submit" class="btn btn-primary">Calculate</button>
+                 </div>
+                 <div class="form-group" id="macdHistogramResult"></div>
+               </form>
+            </div>
+         </div>
+         
+         <div class="panel panel-default">
+            <div class="panel-heading">Stochastic D</div>
+            <div class="panel-body">
+               <form data-toggle="validator" class="form-inline" name="stochasticDForm"  id="stochasticDForm" 
+                     onsubmit="calculateStochasticD(event)">
+                 <div class="form-group">
+                   <label for="stochasticDTickerSymbol">Ticker Symbol</label>
+                   <input type="text" class="form-control" id="stochasticDTickerSymbol" placeholder="TSLA" required data-minlength="1">
+                 </div>
+                 <div class="form-group">
+                    <label for="example-number-input">Period</label>
+                    <input class="form-control" type="number"  min="1" value="3" id="stochasticDPeriod">
+                 </div>
+                 <div class="form-group">
+                    <label for="example-number-input">Length</label>
+                    <input class="form-control" type="number"  min="1" value="14" id="stochasticDLength">
+                 </div>
+                 <div class="form-group">
+                   <button type="submit" class="btn btn-primary">Calculate</button>
+                 </div>
+                 <div class="form-group" id="stochasticDResult"></div>
+               </form>
+            </div>
+         </div>
+         
+         <div class="panel panel-default">
+            <div class="panel-heading">Stochastic K</div>
+            <div class="panel-body">
+               <form data-toggle="validator" class="form-inline" name="stochasticKForm"  id="stochasticKForm" 
+                     onsubmit="calculateStochasticK(event)">
+                 <div class="form-group">
+                   <label for="stochasticKTickerSymbol">Ticker Symbol</label>
+                   <input type="text" class="form-control" id="stochasticKTickerSymbol" placeholder="TSLA" required data-minlength="1">
+                 </div>
+                 <div class="form-group">
+                    <label for="example-number-input">Length</label>
+                    <input class="form-control" type="number"  min="1" value="14" id="stochasticKLength">
+                 </div>
+                 <div class="form-group">
+                   <button type="submit" class="btn btn-primary">Calculate</button>
+                 </div>
+                 <div class="form-group" id="stochasticKResult"></div>
+               </form>
+            </div>
+         </div>
+         
+         <div class="panel panel-default">
+            <div class="panel-heading">Bollinger Band (trademark) Lower</div>
+            <div class="panel-body">
+               <form data-toggle="validator" class="form-inline" name="bbLowerForm"  id="bbLowerForm" 
+                     onsubmit="calculateBBLower(event)">
+                 <div class="form-group">
+                   <label for="bbLowerTickerSymbol">Ticker Symbol</label>
+                   <input type="text" class="form-control" id="bbLowerTickerSymbol" placeholder="TSLA" required data-minK="1">
+                 </div>
+                 <div class="form-group">
+                    <label for="example-number-input">Period</label>
+                    <input class="form-control" type="number"  min="1" value="20" id="bbLowerPeriod">
+                 </div>
+                 <div class="form-group">
+                    <label for="example-number-input">K</label>
+                    <input class="form-control" type="number"  min="1" value="2" id="bbLowerK">
+                 </div>
+                 <div class="form-group">
+                   <button type="submit" class="btn btn-primary">Calculate</button>
+                 </div>
+                 <div class="form-group" id="bbLowerResult"></div>
+               </form>
+            </div>
+         </div>
+         
+         <div class="panel panel-default">
+            <div class="panel-heading">Bollinger Band (trademark) Upper</div>
+            <div class="panel-body">
+               <form data-toggle="validator" class="form-inline" name="bbUpperForm"  id="bbUpperForm" 
+                     onsubmit="calculateBBUpper(event)">
+                 <div class="form-group">
+                   <label for="bbUpperTickerSymbol">Ticker Symbol</label>
+                   <input type="text" class="form-control" id="bbUpperTickerSymbol" placeholder="TSLA" required data-minK="1">
+                 </div>
+             <div class="form-group">
+                    <label for="example-number-input">Period</label>
+                    <input class="form-control" type="number"  min="1" value="20" id="bbUpperPeriod">
+                 </div>
+                 <div class="form-group">
+                    <label for="example-number-input">K</label>
+                    <input class="form-control" type="number"  min="1" value="2" id="bbUpperK">
+                 </div>
+                 <div class="form-group">
+                   <button type="submit" class="btn btn-primary">Calculate</button>
+                 </div>
+                 <div class="form-group" id="bbUpperResult"></div>
+               </form>
+            </div>
+         </div>
+         
+	   </div>
    </body>
 </html>
