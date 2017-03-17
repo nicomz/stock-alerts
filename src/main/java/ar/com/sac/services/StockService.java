@@ -23,20 +23,25 @@ public class StockService implements IStockService{
       return new StockWrapper( yahooFinanceService.getStock( symbol ) );
    }
    
+   /**
+    * Return a year of quotes from a symbol
+    */
    public List<Quote> getHistory( String symbol ) throws IOException{
-      List<HistoricalQuote> history = yahooFinanceService.getHistory( symbol );
-      List<Quote> quotes = historyToQuotes( history );
-      //take the last quote from current day
-      Quote todayQuote = new Quote(yahooFinanceService.getStock( symbol ).getQuote());
-      if(quotes.get( 0 ).getDate().get( Calendar.DATE ) != todayQuote.getDate().get( Calendar.DATE )){
-         quotes.add( 0, todayQuote );
-      }
-      return quotes;
+      Calendar yearAgo = Calendar.getInstance();
+      yearAgo.add( Calendar.YEAR, -1 );
+      return getHistory( symbol, yearAgo, Calendar.getInstance() );
    }
    
    public List<Quote> getHistory( String symbol, Calendar from, Calendar to ) throws IOException{
       List<HistoricalQuote> history = yahooFinanceService.getHistory( symbol, from, to );
       List<Quote> quotes = historyToQuotes( history );
+
+      //take the last quote from current day
+      Quote todayQuote = new Quote(yahooFinanceService.getStock( symbol ).getQuote());
+      if(quotes.get( 0 ).getDate().get( Calendar.DATE ) != todayQuote.getDate().get( Calendar.DATE )){
+         quotes.add( 0, todayQuote );
+      }
+      
       return quotes;
    }
    
