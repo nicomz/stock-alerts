@@ -85,6 +85,7 @@ public class Simulation {
 
    private void initSimulationVariables() throws IOException {
       lastSimulatorRecord = new SimulatorRecord();
+      lastSimulatorRecord.setOrderDate( new GregorianCalendar(parameters.getYearFrom(),0,1) );
       lastSimulatorRecord.setId( 0 );
       lastSimulatorRecord.setCapitalBalance( parameters.getInitialCapital() );
       lastSimulatorRecord.setLiquity( parameters.getInitialCapital() );
@@ -161,14 +162,18 @@ public class Simulation {
       
       boolean sold = false;
       Operator operator = expressionService.parseSimulatorExpression( parameters.getSellExpression(), this, stockSimulatorService );
-      if( operator.evaluate() ){
-         SimulatorRecord sellRecord = sell();
-        
-         simulationResults.addRecord( sellRecord );
-         positionsMap.put( currentSymbol, null );
-         lastSimulatorRecord = sellRecord;
-         sold = true;
-         updateStatistics();
+      try{
+         if( operator.evaluate() ){
+            SimulatorRecord sellRecord = sell();
+           
+            simulationResults.addRecord( sellRecord );
+            positionsMap.put( currentSymbol, null );
+            lastSimulatorRecord = sellRecord;
+            sold = true;
+            updateStatistics();
+         }
+      }catch(Exception e){
+         
       }
       return sold;
    }
@@ -221,33 +226,37 @@ public class Simulation {
       boolean bought = false;
       Operator operator = expressionService.parseSimulatorExpression( parameters.getBuyExpression(), this, stockSimulatorService );
       
-      if( operator.evaluate() ){
-         if(lastSimulatorRecord.getLiquity() >= parameters.getPositionMinimumValue()){
-            double buyPrice = calculateBuyPrice();
-            double stockPrice = currentLastQuote.getClose().doubleValue();
-            int amount = (int)(buyPrice / stockPrice);
-            double stocksValue = amount * stockPrice;
-            double commission =  stocksValue * parameters.getCommissionPercentage() / 100d;
-            double orderValue = stocksValue + commission;
-            //make the buy
-            SimulatorRecord buyRecord = new SimulatorRecord();
-            buyRecord.setId( lastSimulatorRecord.getId() + 1 );
-            buyRecord.setLiquity( lastSimulatorRecord.getLiquity() - orderValue );
-            buyRecord.setOrderAmount( amount );
-            buyRecord.setOrderPrice( stockPrice );
-            buyRecord.setOrderSymbol( currentSymbol );
-            buyRecord.setOrderDate( currentLastQuote.getDate() );
-            buyRecord.setOrderTotalCost( orderValue );
-            buyRecord.setOrderType( "Buy" );
-            buyRecord.setCapitalBalance( lastSimulatorRecord.getCapitalBalance() - commission );
-            
-            simulationResults.addRecord( buyRecord );
-            positionsMap.put( currentSymbol, buyRecord );
-            lastSimulatorRecord = buyRecord;
-            bought = true;
-         }else{
-            getSymbolPerformanceStatistics().incBuyingOpportunitiesMissed();
+      try{
+         if( operator.evaluate() ){
+            if(lastSimulatorRecord.getLiquity() >= parameters.getPositionMinimumValue()){
+               double buyPrice = calculateBuyPrice();
+               double stockPrice = currentLastQuote.getClose().doubleValue();
+               int amount = (int)(buyPrice / stockPrice);
+               double stocksValue = amount * stockPrice;
+               double commission =  stocksValue * parameters.getCommissionPercentage() / 100d;
+               double orderValue = stocksValue + commission;
+               //make the buy
+               SimulatorRecord buyRecord = new SimulatorRecord();
+               buyRecord.setId( lastSimulatorRecord.getId() + 1 );
+               buyRecord.setLiquity( lastSimulatorRecord.getLiquity() - orderValue );
+               buyRecord.setOrderAmount( amount );
+               buyRecord.setOrderPrice( stockPrice );
+               buyRecord.setOrderSymbol( currentSymbol );
+               buyRecord.setOrderDate( currentLastQuote.getDate() );
+               buyRecord.setOrderTotalCost( orderValue );
+               buyRecord.setOrderType( "Buy" );
+               buyRecord.setCapitalBalance( lastSimulatorRecord.getCapitalBalance() - commission );
+               
+               simulationResults.addRecord( buyRecord );
+               positionsMap.put( currentSymbol, buyRecord );
+               lastSimulatorRecord = buyRecord;
+               bought = true;
+            }else{
+               getSymbolPerformanceStatistics().incBuyingOpportunitiesMissed();
+            }
          }
+      }catch(Exception e){
+         
       }
       return bought;
    }

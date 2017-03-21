@@ -17,7 +17,8 @@
 
       <!-- D3 graphics -->
       <script src="https://d3js.org/d3.v4.min.js"></script>
-      
+      <script language="Javascript" src="/stock-alerts/pages/js/chartUtils.js"> </script>
+
       <script language="Javascript" src="/stock-alerts/pages/js/httpUtils.js"> </script>
       
       <script language="Javascript">
@@ -34,90 +35,15 @@
              var url = "/stock-alerts/stocks" + (historyCheckbox.checked? "/history" :"") + "?symbol=" + tickerInput.value;
              httpGetAsync( url, function( result ){ 
                  document.getElementById( "resultDiv" ).innerHTML = result; 
+                 var history;
+                 var resultObject = JSON.parse(result);
                  if( historyCheckbox.checked ){
-                	  initChart(JSON.parse(result)); 
+                     history = resultObject;
                  }else{
-                	  initChart(JSON.parse(result).stock.history); 
+                	  history = resultObject.stock.history
                  }
+                 createChart(history, "visualisation", "date", "close");
              } );
-         }
-
-         // parse the date / time
-         var parseTime = d3.timeParse("%d/%m/%Y");
-
-       //helper function
-         function getDate(d) {
-             if(typeof d.date == "string"){
-            	   return parseTime( d.date );
-             }else{
-                 //Date has come in "long" format
-            	 return new Date( d.date );
-             }
-         }
-
-         function getMaxPrice( data ){
-             var max = 0;
-             for(var i = 0; i < data.length ; i++){
-                var price = data[i].close;
-                if(price > max){
-                   max = price;
-                }
-             }
-
-             return max * 1.5;
-          }
-
-         function initChart( data ) {
-        	   document.getElementById("visualisation").innerHTML = "";
-				// get max and min dates - this assumes data is sorted
-				var maxDate = getDate(data[0]),
-				    minDate = getDate(data[data.length-1]);
-
-
-             var vis = d3.select("#visualisation"),
-                 WIDTH = 1000,
-                 HEIGHT = 500,
-                 MARGINS = {
-                     top: 20,
-                     right: 20,
-                     bottom: 20,
-                     left: 50
-                 },
-                 xScale = d3.scaleTime().range([MARGINS.left, WIDTH - MARGINS.right]).domain([minDate, maxDate]),
-                 yScale = d3.scaleLinear().range([HEIGHT - MARGINS.top, MARGINS.bottom]).domain([0, getMaxPrice(data)]),
-                 xAxis = d3.axisBottom().scale(xScale),
-                 yAxis = d3.axisLeft().scale(yScale);
-             
-             vis.append("svg:g")
-                 .attr("class", "x axis")
-                 .attr("transform", "translate(0," + (HEIGHT - MARGINS.bottom) + ")")
-                 .call(xAxis);
-             vis.append("svg:g")
-                 .attr("class", "y axis")
-                 .attr("transform", "translate(" + (MARGINS.left) + ",0)")
-                 .call(yAxis);
-             
-             var lineGen = d3.line()
-                 .x(function(d) {
-                     console.log(d.date + " = " + getDate(d));
-                     return xScale(getDate(d));
-                 })
-                 .y(function(d) {
-                     return yScale(d.close);
-                 })
-                 .curve(d3.curveBasis)
-             
-             vis.append('svg:path')
-                 .attr('d', lineGen(data))
-                 .attr('stroke', 'green')
-                 .attr('stroke-width', 2)
-                 .attr('fill', 'none');
-             
-             /*vis.append('svg:path')
-                 .attr('d', lineGen(data2))
-                 .attr('stroke', 'blue')
-                 .attr('stroke-width', 2)
-                 .attr('fill', 'none');*/
          }
 
       </script>

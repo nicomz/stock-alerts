@@ -1,28 +1,162 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html xmlns:uiform>
-   <head>
-      <!---------------------------------------------------------->
-      <!----------------- HOME DE LA APLICACION ------------------>
-      <!---------------------------------------------------------->
-      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-      
-       <!-- Latest compiled and minified CSS -->
-      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-      <!-- jQuery library -->
-      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-      <!-- Latest compiled JavaScript -->
-      <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<head>
+<!---------------------------------------------------------->
+<!----------------- HOME DE LA APLICACION ------------------>
+<!---------------------------------------------------------->
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 
-      <script language="Javascript">
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet"
+	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<!-- jQuery library -->
+<script
+	src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<!-- Latest compiled JavaScript -->
+<script
+	src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<!-- Valildator -->
+<script
+	src="https://cdnjs.cloudflare.com/ajax/libs/1000hz-bootstrap-validator/0.11.9/validator.min.js"></script>
+
+<!-- D3 graphics -->
+<script src="https://d3js.org/d3.v4.min.js"></script>
+<script language="Javascript" src="/stock-alerts/pages/js/chartUtils.js"> </script>
+
+<script language="Javascript" src="/stock-alerts/pages/js/httpUtils.js"> </script>
+
+<script language="Javascript">
          
          function startup(){
            
          }
 
+         function consult( event ){
+             //avoids default submit process
+             event.preventDefault();
+             var bodyObject = {};
+             bodyObject.initialCapital =  getValue("initialCapital");
+             bodyObject.commissionPercentage = getValue("commissionPercentage");
+             bodyObject.positionMinimumValue = getValue("positionMinimumValue");
+             bodyObject.positionPercentage = getValue("positionPercentage");
+             bodyObject.positionMaximumValue = getValue("positionMaximumValue");
+             bodyObject.buyExpression = getValue("buyExpression");
+             bodyObject.sellExpression = getValue("sellExpression");
+             bodyObject.stopLossPercentage = getValue("stopLossPercentage");
+             var tickerInput = document.getElementById( "tickerSymbols" );
+             bodyObject.symbols = tickerInput.value.replace(/\s/g,'').split(",");
+             bodyObject.yearFrom = getValue("yearFrom");
+             bodyObject.yearTo = getValue("yearTo");
+             bodyObject.previousDaysOfAnalysis = getValue("previousDaysOfAnalysis");
+             
+             
+             var url = "/stock-alerts/simulator";
+             httpPostAsync( url, bodyObject, callback );
+         }
+
+         function getValue( id ){
+        	   return document.getElementById( id ).value;
+         }
+
+        	 function callback( result ){ 
+              document.getElementById( "resultDiv" ).innerHTML = result; 
+              var resultObject = JSON.parse(result);
+              var history = resultObject.records;
+              createChart(history, "visualisation", "orderDate", "capitalBalance","liquity");
+          } 
+
       </script>
-   </head>
-   
-   <body onload="startup();" style="overflow: hidden; margin: 0px; border: 0px;" >
-   Simulator
-   </body>
+</head>
+
+<!-- 
+   {
+   "initialCapital": 100000,
+   "commissionPercentage": 0.6,
+   "positionMinimumValue": 20000,
+   "positionPercentage": 20,
+   "positionMaximumValue": 150000,
+   "buyExpression": "MACD(12,26,[SYMBOL])>MACD_SIGNAL_LINE(12,26,9,[SYMBOL])",
+   "sellExpression": "MACD(12,26,[SYMBOL])<MACD_SIGNAL_LINE(12,26,9,[SYMBOL])",
+   "stopLossPercentage" :  2,
+   "symbols": ["GOOGL","AAPL","TSLA"],
+   "yearFrom": 2016,
+   "yearTo": 2017,
+   "previousDaysOfAnalysis": 365
+}
+    -->
+
+<body onload="startup();"
+	style="overflow: auto; margin: 0px; border: 0px;">
+	<div class="container">
+		<h2>Simulator</h2>
+		<form data-toggle="validator" name="simulatorForm" id="simulatorForm"
+			onsubmit="consult(event)">
+			<div class="form-group">
+				<label for="initialCapital">Initial Capital</label> <input
+					class="form-control" type="number" min="1" value="115000"
+					id="initialCapital">
+			</div>
+			<div class="form-group">
+				<label for="commissionPercentage">Commission Percentage</label> <input
+					class="form-control" type="number" min="0.01" value="0.7"
+					id="commissionPercentage" step="any">
+			</div>
+			<div class="form-group">
+				<label for="positionMinimumValue">Position Minimum Value</label> <input
+					class="form-control" type="number" min="1" value="20000"
+					id="positionMinimumValue">
+			</div>
+			<div class="form-group">
+				<label for="positionPercentage">Position Percentage</label> <input
+					class="form-control" type="number" min="1" value="20"
+					id="positionPercentage">
+			</div>
+			<div class="form-group">
+				<label for="positionMaximumValue">Position Maximum Value</label> <input
+					class="form-control" type="number" min="1" value="150000"
+					id="positionMaximumValue">
+			</div>
+			<div class="form-group">
+				<label for="buyExpression">Buy Expression</label> <input type="text"
+					class="form-control" id="buyExpression"
+					value="STOCHASTIC_K(14,[SYMBOL])>STOCHASTIC_D(14,3,[SYMBOL])"
+					required data-minlength="1">
+			</div>
+			<div class="form-group">
+				<label for="sellExpression">Sell Expression</label> <input
+					type="text" class="form-control" id="sellExpression"
+					value="STOCHASTIC_K(14,[SYMBOL])<STOCHASTIC_D(14,3,[SYMBOL])&&[OPERATION_PERFORMANCE_PERCENTAGE]>3"
+					required data-minlength="1">
+			</div>
+			<div class="form-group">
+				<label for="stopLossPercentage">StopLoss Percentage</label> <input
+					class="form-control" type="number" min="0.1" value="10"
+					id="stopLossPercentage" step="any">
+			</div>
+			<div class="form-group">
+				<label for="tickerSymbols">Ticker Symbols</label> <input type="text"
+					class="form-control" id="tickerSymbols" placeholder="TSLA, AAPL"
+					required data-minlength="1">
+			</div>
+			<div class="form-group">
+				<label for="yearFrom">Year From</label> <input class="form-control"
+					type="number" min="1" value="2016" id="yearFrom">
+			</div>
+			<div class="form-group">
+				<label for="yearTo">Year To</label> <input class="form-control"
+					type="number" min="1" value="2017" id="yearTo">
+			</div>
+			<div class="form-group">
+				<label for="previousDaysOfAnalysis">Previous Days of
+					Analysis</label> <input class="form-control" type="number" min="1"
+					value="365" id="previousDaysOfAnalysis">
+			</div>
+			<div class="form-group">
+				<button type="submit" class="btn btn-primary">Run</button>
+			</div>
+		</form>
+		<div id="resultDiv"></div>
+		<svg id="visualisation" width="1000" height="500"></svg>
+	</div>
+</body>
 </html>
