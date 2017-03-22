@@ -1,3 +1,9 @@
+/**
+ *  <!-- D3 graphics -->
+	<script src="https://d3js.org/d3.v4.min.js"></script>
+	<script language="Javascript" src="/stock-alerts/pages/js/chartUtils.js"> </script>
+ */
+
 // parse the date / time
 var parseTime = d3.timeParse("%d/%m/%Y");
 
@@ -45,7 +51,10 @@ function createLineGenerator(dateParam, priceParam, xScale, yScale){
 	}).curve(d3.curveBasis)
 }
 
-function createChart(data, containerId, dateParam, priceParam, price2Param) {
+function createChart(data, containerId, dateParam, priceParam, price2Param, labels) {
+	if( !labels ){
+		labels = [];
+	}
 	document.getElementById(containerId).innerHTML = "";
 	// get max and min dates - this assumes data is sorted
 	var maxDate = getDate(data[0], dateParam), minDate = getDate(data[data.length - 1], dateParam);
@@ -81,10 +90,24 @@ function createChart(data, containerId, dateParam, priceParam, price2Param) {
 //	}).curve(d3.curveBasis)
 
 	vis.append('svg:path').attr('d', createLineGenerator(dateParam, priceParam,xScale, yScale)(data)).attr('stroke', 'green')
-			.attr('stroke-width', 2).attr('fill', 'none');
+			.attr('stroke-width', 2).attr('fill', 'none')
+	
+	vis.append("text")
+	   .attr('text-anchor', 'end')
+	   .attr("transform", "translate(" + (WIDTH - MARGINS.right) + "," + (10 + MARGINS.top) + ")")
+	   .attr("dy", ".35em")
+	   .style("fill", "green")
+	   .text(labels[0]? labels[0] : '');
 
 	if( price2Param ){
-	 vis.append('svg:path') .attr('d', createLineGenerator(dateParam, price2Param,xScale, yScale)(data)) .attr('stroke', 'blue')
+	 vis.append('svg:path').attr('d', createLineGenerator(dateParam, price2Param,xScale, yScale)(data)).attr('stroke', 'blue')
 	 .attr('stroke-width', 2) .attr('fill', 'none');
+	 
+	 vis.append("text")
+	   .attr('text-anchor', 'end')
+	   .attr("transform", "translate(" + (WIDTH - MARGINS.right) + "," + (10 + MARGINS.top + 20) + ")")
+	   .attr("dy", ".35em")
+	   .style("fill", "blue")
+	   .text(labels[1]? labels[1] : '');
 	}	 
 }

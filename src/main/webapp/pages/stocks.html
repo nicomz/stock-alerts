@@ -14,12 +14,20 @@
       <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
       <!-- Valildator -->
       <script src="https://cdnjs.cloudflare.com/ajax/libs/1000hz-bootstrap-validator/0.11.9/validator.min.js"></script>
+      
+      <!-- DataTables -->
+		<link rel="stylesheet" href="https://cdn.datatables.net/1.10.13/css/dataTables.bootstrap.min.css"/>
+		<script src="https://cdn.datatables.net/1.10.13/js/jquery.dataTables.min.js"></script>
+		<script src="https://cdn.datatables.net/1.10.13/js/dataTables.bootstrap.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.8.4/moment.min.js"></script>
+		<script src="https://cdn.datatables.net/plug-ins/1.10.13/sorting/datetime-moment.js"></script>
 
       <!-- D3 graphics -->
       <script src="https://d3js.org/d3.v4.min.js"></script>
       <script language="Javascript" src="/stock-alerts/pages/js/chartUtils.js"> </script>
 
       <script language="Javascript" src="/stock-alerts/pages/js/httpUtils.js"> </script>
+      <script language="Javascript" src="/stock-alerts/pages/js/tableUtils.js"> </script>
       
       <script language="Javascript">
          
@@ -30,21 +38,49 @@
          function consult( event ){
              //avoids default submit process
              event.preventDefault();
+             $("#resultDiv").empty();
+             $("#visualisation").empty();
+             
         	    var tickerInput = document.getElementById( "tickerSymbol" );
         	    var historyCheckbox = document.getElementById( "historyCheckbox" );
              var url = "/stock-alerts/stocks" + (historyCheckbox.checked? "/history" :"") + "?symbol=" + tickerInput.value;
-             httpGetAsync( url, function( result ){ 
-                 document.getElementById( "resultDiv" ).innerHTML = result; 
-                 var history;
-                 var resultObject = JSON.parse(result);
-                 if( historyCheckbox.checked ){
-                     history = resultObject;
-                 }else{
-                	  history = resultObject.stock.history
-                 }
-                 createChart(history, "visualisation", "date", "close");
-             } );
+             httpGetAsync( url, stockToPage );
          }
+
+         function stockToPage( result ){
+        	    var historyCheckbox = document.getElementById( "historyCheckbox" );
+        	    var history;
+             var resultObject = JSON.parse(result);
+             if( historyCheckbox.checked ){
+                 history = resultObject;
+             }else{
+                 var resultDiv = document.getElementById( "resultDiv" );
+                 var header = document.createElement("h4");
+                 header.innerHTML = resultObject.stock.name;
+                 resultDiv.appendChild( header );
+                 var currentQuote = document.createElement("div");
+                 currentQuote.id= "currentQuote";
+                 resultDiv.appendChild( currentQuote );
+                 createTable( [ resultObject.stock.quote ], "currentQuote", ["open","dayLow","dayHigh","price","volume"], ["Open","Day Low","Day High","Price","Volume"] );
+                 //resultDiv.innerHTML = JSON.stringify(resultObject, null, 2);
+                 history = resultObject.stock.history
+                 // converts to argentinian date format
+                 for(var i = 0; i < history.length; i++){
+                     var date = new Date(history[i].date);
+                     var day = (date.getDay() < 10 ? "0" + date.getDay() : date.getDay());
+                     var month = ((date.getMonth()+1) < 10 ? "0" + (date.getMonth()+1) : (date.getMonth()+1));
+                     history[i].date = day + "/" + month + "/" + date.getFullYear();
+                 }
+
+                 header = document.createElement("h4");
+                 header.innerHTML = "Max prices history per month"
+                 resultDiv.appendChild( header );
+             }
+             createTable( history, "resultDiv", ["date","open","low","high","close","volume"], ["Date","Open","Low","High","Close","Volume"] );
+             createChart( history, "visualisation", "date", "close" , null, ["Price"]);
+         }
+
+         
 
       </script>
    </head>
@@ -52,19 +88,23 @@
    <body onload="startup();" style="overflow: auto; margin: 0px; border: 0px;" >
    <div class="container">
       <h2>Stocks</h2>
-	   <form data-toggle="validator" name="stocksForm" id="stocksForm" onsubmit="consult(event)">
-		  <div class="form-group">
-		    <label for="tickerSymbol">Ticker Symbol</label>
-		    <input type="text" class="form-control" id="tickerSymbol" aria-describedby="symbolHelp" placeholder="TSLA" required data-minlength="1">
-		    <small id="symbolHelp" class="form-text text-muted">Use Yahoo notation (".BA" for Buenos Aires stocks)</small>
-		  </div>
-		  <div class="checkbox">
-	        <label><input id="historyCheckbox" type="checkbox"> Get history</label>
-	     </div>
-	     <div class="form-group">
-		    <button type="submit" class="btn btn-primary">Consult</button>
-		  </div>
-		</form>
+      <div class="panel panel-default">
+         <div class="panel-body">
+			   <form data-toggle="validator" name="stocksForm" id="stocksForm" onsubmit="consult(event)">
+				  <div class="form-group">
+				    <label for="tickerSymbol">Ticker Symbol</label>
+				    <input type="text" class="form-control" id="tickerSymbol" aria-describedby="symbolHelp" placeholder="TSLA" required data-minlength="1">
+				    <small id="symbolHelp" class="form-text text-muted">Use Yahoo notation (".BA" for Buenos Aires stocks)</small>
+				  </div>
+				  <div class="checkbox">
+			        <label><input id="historyCheckbox" type="checkbox"> Get history</label>
+			     </div>
+			     <div class="form-group">
+				    <button type="submit" class="btn btn-primary">Consult</button>
+				  </div>
+				</form>
+			</div>
+		</div>
 		<div id="resultDiv">
 		</div>
 		<svg id="visualisation" width="1000" height="500"></svg>

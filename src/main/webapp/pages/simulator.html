@@ -8,7 +8,7 @@
 
 <!-- Latest compiled and minified CSS -->
 <link rel="stylesheet"
-	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"/>
 <!-- jQuery library -->
 <script
 	src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
@@ -18,12 +18,20 @@
 <!-- Valildator -->
 <script
 	src="https://cdnjs.cloudflare.com/ajax/libs/1000hz-bootstrap-validator/0.11.9/validator.min.js"></script>
+	
+<!-- DataTables -->
+<link rel="stylesheet" href="https://cdn.datatables.net/1.10.13/css/dataTables.bootstrap.min.css"/>
+<script src="https://cdn.datatables.net/1.10.13/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.13/js/dataTables.bootstrap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.8.4/moment.min.js"></script>
+<script src="https://cdn.datatables.net/plug-ins/1.10.13/sorting/datetime-moment.js"></script>
 
 <!-- D3 graphics -->
 <script src="https://d3js.org/d3.v4.min.js"></script>
 <script language="Javascript" src="/stock-alerts/pages/js/chartUtils.js"> </script>
 
 <script language="Javascript" src="/stock-alerts/pages/js/httpUtils.js"> </script>
+<script language="Javascript" src="/stock-alerts/pages/js/tableUtils.js"> </script>
 
 <script language="Javascript">
          
@@ -34,6 +42,11 @@
          function consult( event ){
              //avoids default submit process
              event.preventDefault();
+             $("#resultDiv").empty();
+             $("#performancesDiv").empty();
+             $("#recordsDiv").empty();
+             $("#visualisation").empty();
+             
              var bodyObject = {};
              bodyObject.initialCapital =  getValue("initialCapital");
              bodyObject.commissionPercentage = getValue("commissionPercentage");
@@ -59,11 +72,60 @@
          }
 
         	 function callback( result ){ 
-              document.getElementById( "resultDiv" ).innerHTML = result; 
+//               document.getElementById( "resultDiv" ).innerHTML = result; 
               var resultObject = JSON.parse(result);
               var history = resultObject.records;
-              createChart(history, "visualisation", "orderDate", "capitalBalance","liquity");
+              strategyResultsToDiv(resultObject);
+
+              var performancesDiv = document.getElementById( "performancesDiv" );
+              var header = document.createElement( "h3" );
+              header.innerHTML = "Performances per Symbol" 
+              performancesDiv.appendChild( header );
+              createTable(resultObject.symbolPerformances, "performancesDiv", 
+                      ["symbol","performance","positiveSales", "negativeSales","buyingOpportunitiesMissed","operationDays","operationDaysAverage"], 
+                      ["Symbol","Performance","Positive Sales", "Negative Sales","Buying Opportunities Missed","Operation Days","Operation Days Average"]);
+
+              var recordsDiv = document.getElementById( "recordsDiv" );
+              header = document.createElement( "h3" );
+              header.innerHTML = "Simulation Records" 
+              recordsDiv.appendChild( header );
+              createTable(history, "recordsDiv", 
+                      ["id","orderDate","relatedRecordId", "capitalBalance","liquity","orderType","orderSymbol","orderAmount","orderPrice","orderTotalCost","operationPerformance","operationDays"], 
+                      ["Id","Date","Related Record", "Capital Balance","Liquity","Order Type","Symbol","Amount","Price","Total Cost","Operation Performance","Operation Days"]);
+              createChart(history, "visualisation", "orderDate", "capitalBalance","liquity", ["Capital","Liquity"]);
           } 
+
+        	 function strategyResultsToDiv( resultObject ){
+        	      var resultDiv = document.getElementById( "resultDiv" );
+        	      var header = document.createElement( "h2" );
+        	      header.innerHTML = "Strategy Simulation Results" 
+        	    	resultDiv.appendChild( header );
+      	    	
+        	      var dl = document.createElement( "dl" );
+        	      dl.className = "dl-horizontal";
+        	      resultDiv.appendChild( dl );
+
+        	      appendDescription( dl, "Final Capital Balance", "$" + resultObject.finalCapitalBalance);
+        	      appendDescription( dl, "Final Liquity", "$" + resultObject.finalLiquity);
+        	      appendDescription( dl, "Total Performance", "$" + resultObject.totalPerformance);
+        	      appendDescription( dl, "Total Performance Percentage", "%" + resultObject.totalPerformancePercentage);
+        	      appendDescription( dl, "Total Buying Opportunities Missed", resultObject.totalBuyingOpportunitiesMissed);
+        	      appendDescription( dl, "Quantity of Operations", resultObject.quantityOfOperations);
+        	      appendDescription( dl, "Positive Sales", resultObject.positiveSales);
+        	      appendDescription( dl, "Negative Sales", resultObject.negativeSales);
+        	      
+          }
+
+          function appendDescription( parentDL, title, value ){
+        	     var dt = document.createElement( "dt" );
+        	     dt.style='width: 320px;'
+              dt.innerHTML = title;
+              parentDL.appendChild( dt );
+              var dd = document.createElement( "dd" );
+              dd.style='margin-left: 330px';
+              dd.innerHTML = value ;
+              parentDL.appendChild( dd );
+          }
 
       </script>
 </head>
@@ -89,73 +151,79 @@
 	style="overflow: auto; margin: 0px; border: 0px;">
 	<div class="container">
 		<h2>Simulator</h2>
-		<form data-toggle="validator" name="simulatorForm" id="simulatorForm"
-			onsubmit="consult(event)">
-			<div class="form-group">
-				<label for="initialCapital">Initial Capital</label> <input
-					class="form-control" type="number" min="1" value="115000"
-					id="initialCapital">
+		<div class="panel panel-default">
+         <div class="panel-body">
+				<form data-toggle="validator" name="simulatorForm" id="simulatorForm"
+					onsubmit="consult(event)">
+					<div class="form-group">
+						<label for="initialCapital">Initial Capital</label> <input
+							class="form-control" type="number" min="1" value="115000"
+							id="initialCapital">
+					</div>
+					<div class="form-group">
+						<label for="commissionPercentage">Commission Percentage</label> <input
+							class="form-control" type="number" min="0.01" value="0.7"
+							id="commissionPercentage" step="any">
+					</div>
+					<div class="form-group">
+						<label for="positionMinimumValue">Position Minimum Value</label> <input
+							class="form-control" type="number" min="1" value="20000"
+							id="positionMinimumValue">
+					</div>
+					<div class="form-group">
+						<label for="positionPercentage">Position Percentage</label> <input
+							class="form-control" type="number" min="1" value="20"
+							id="positionPercentage">
+					</div>
+					<div class="form-group">
+						<label for="positionMaximumValue">Position Maximum Value</label> <input
+							class="form-control" type="number" min="1" value="150000"
+							id="positionMaximumValue">
+					</div>
+					<div class="form-group">
+						<label for="buyExpression">Buy Expression</label> <input type="text"
+							class="form-control" id="buyExpression"
+							value="STOCHASTIC_K(14,[SYMBOL])>STOCHASTIC_D(14,3,[SYMBOL])"
+							required data-minlength="1">
+					</div>
+					<div class="form-group">
+						<label for="sellExpression">Sell Expression</label> <input
+							type="text" class="form-control" id="sellExpression"
+							value="STOCHASTIC_K(14,[SYMBOL])<STOCHASTIC_D(14,3,[SYMBOL])&&[OPERATION_PERFORMANCE_PERCENTAGE]>3"
+							required data-minlength="1">
+					</div>
+					<div class="form-group">
+						<label for="stopLossPercentage">StopLoss Percentage</label> <input
+							class="form-control" type="number" min="0.1" value="10"
+							id="stopLossPercentage" step="any">
+					</div>
+					<div class="form-group">
+						<label for="tickerSymbols">Ticker Symbols</label> <input type="text"
+							class="form-control" id="tickerSymbols" placeholder="TSLA, AAPL"
+							required data-minlength="1">
+					</div>
+					<div class="form-group">
+						<label for="yearFrom">Year From</label> <input class="form-control"
+							type="number" min="1" value="2016" id="yearFrom">
+					</div>
+					<div class="form-group">
+						<label for="yearTo">Year To</label> <input class="form-control"
+							type="number" min="1" value="2017" id="yearTo">
+					</div>
+					<div class="form-group">
+						<label for="previousDaysOfAnalysis">Previous Days of
+							Analysis</label> <input class="form-control" type="number" min="1"
+							value="365" id="previousDaysOfAnalysis">
+					</div>
+					<div class="form-group">
+						<button type="submit" class="btn btn-primary">Run</button>
+					</div>
+				</form>
 			</div>
-			<div class="form-group">
-				<label for="commissionPercentage">Commission Percentage</label> <input
-					class="form-control" type="number" min="0.01" value="0.7"
-					id="commissionPercentage" step="any">
-			</div>
-			<div class="form-group">
-				<label for="positionMinimumValue">Position Minimum Value</label> <input
-					class="form-control" type="number" min="1" value="20000"
-					id="positionMinimumValue">
-			</div>
-			<div class="form-group">
-				<label for="positionPercentage">Position Percentage</label> <input
-					class="form-control" type="number" min="1" value="20"
-					id="positionPercentage">
-			</div>
-			<div class="form-group">
-				<label for="positionMaximumValue">Position Maximum Value</label> <input
-					class="form-control" type="number" min="1" value="150000"
-					id="positionMaximumValue">
-			</div>
-			<div class="form-group">
-				<label for="buyExpression">Buy Expression</label> <input type="text"
-					class="form-control" id="buyExpression"
-					value="STOCHASTIC_K(14,[SYMBOL])>STOCHASTIC_D(14,3,[SYMBOL])"
-					required data-minlength="1">
-			</div>
-			<div class="form-group">
-				<label for="sellExpression">Sell Expression</label> <input
-					type="text" class="form-control" id="sellExpression"
-					value="STOCHASTIC_K(14,[SYMBOL])<STOCHASTIC_D(14,3,[SYMBOL])&&[OPERATION_PERFORMANCE_PERCENTAGE]>3"
-					required data-minlength="1">
-			</div>
-			<div class="form-group">
-				<label for="stopLossPercentage">StopLoss Percentage</label> <input
-					class="form-control" type="number" min="0.1" value="10"
-					id="stopLossPercentage" step="any">
-			</div>
-			<div class="form-group">
-				<label for="tickerSymbols">Ticker Symbols</label> <input type="text"
-					class="form-control" id="tickerSymbols" placeholder="TSLA, AAPL"
-					required data-minlength="1">
-			</div>
-			<div class="form-group">
-				<label for="yearFrom">Year From</label> <input class="form-control"
-					type="number" min="1" value="2016" id="yearFrom">
-			</div>
-			<div class="form-group">
-				<label for="yearTo">Year To</label> <input class="form-control"
-					type="number" min="1" value="2017" id="yearTo">
-			</div>
-			<div class="form-group">
-				<label for="previousDaysOfAnalysis">Previous Days of
-					Analysis</label> <input class="form-control" type="number" min="1"
-					value="365" id="previousDaysOfAnalysis">
-			</div>
-			<div class="form-group">
-				<button type="submit" class="btn btn-primary">Run</button>
-			</div>
-		</form>
+		</div>
 		<div id="resultDiv"></div>
+		<div id="performancesDiv" style="margin-top: 10px;"></div>
+		<div id="recordsDiv" style="margin-top: 10px;"></div>
 		<svg id="visualisation" width="1000" height="500"></svg>
 	</div>
 </body>
