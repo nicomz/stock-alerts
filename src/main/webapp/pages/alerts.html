@@ -12,17 +12,183 @@
       <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
       <!-- Latest compiled JavaScript -->
       <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+      <!-- Valildator -->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/1000hz-bootstrap-validator/0.11.9/validator.min.js"></script>
+      
+      <!-- DataTables -->
+      <link rel="stylesheet" href="https://cdn.datatables.net/1.10.13/css/dataTables.bootstrap.min.css"/>
+      <script src="https://cdn.datatables.net/1.10.13/js/jquery.dataTables.min.js"></script>
+      <script src="https://cdn.datatables.net/1.10.13/js/dataTables.bootstrap.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.8.4/moment.min.js"></script>
+      <script src="https://cdn.datatables.net/plug-ins/1.10.13/sorting/datetime-moment.js"></script>
+
+      <!-- D3 graphics -->
+      <script src="https://d3js.org/d3.v4.min.js"></script>
+      <script language="Javascript" src="/stock-alerts/pages/js/chartUtils.js"> </script>
+
+      <script language="Javascript" src="/stock-alerts/pages/js/httpUtils.js"> </script>
+      <script language="Javascript" src="/stock-alerts/pages/js/tableUtils.js"> </script>
+      
+      <style>
+          tbody tr.selected td {
+              background-color: #337ab7;
+              color: white;
+          }
+      </style>
 
       <script language="Javascript">
+         var dataTable;
          
          function startup(){
-           
+        	  loadAlerts();
          }
+
+         function loadAlerts(){
+             $("#alertsDiv").empty();
+        	    httpGetAsync( "/stock-alerts/alerts", function( results ){
+        	    	var resultDiv = document.getElementById( "alertsDiv" );
+               var header = document.createElement("h4");
+               header.innerHTML = "Current Alerts";
+               resultDiv.appendChild( header );
+        	    	dataTable = createTable( JSON.parse(results), "alertsDiv", 
+                	    	["id", "active", "expression", "name", "description", "sendEmail", "symbol", "opposedAlertId"],
+                	    	["Id", "Active", "Expression", "Name", "Description", "Send Email", "Symbol", "Opposed Alert Id"],
+                	    	function( data ){
+        	    		         completeForm(data);
+        	    		      } );
+             });
+        	    
+         }
+
+         function completeForm( alert ){
+        	   document.getElementById("id").value = alert[0];
+        	   document.getElementById("activeCheckbox").checked = (alert[1] == "true"? true : false);
+        	   document.getElementById("expression").value = alert[2];
+        	   document.getElementById("name").value = alert[3];
+        	   document.getElementById("description").value = alert[4];
+        	   document.getElementById("sendEmailCheckbox").checked = (alert[5] == "true"? true : false);
+        	   document.getElementById("tickerSymbol").value = alert[6];
+        	   document.getElementById("opposedAlertId").value = alert[7];
+        	   //revalidate form
+        	   $("#alertForm").validator('validate');
+         }
+
+         function save( event ){
+        	    //avoids default submit process
+             event.preventDefault();
+             var bodyObject = {};
+             bodyObject.id = document.getElementById("id").value;
+             bodyObject.active = document.getElementById("activeCheckbox").checked;
+             bodyObject.expression = document.getElementById("expression").value;
+             bodyObject.name = document.getElementById("name").value;
+             bodyObject.description = document.getElementById("description").value;
+             bodyObject.sendEmail = document.getElementById("sendEmailCheckbox").checked;
+             bodyObject.symbol = document.getElementById("tickerSymbol").value;
+             bodyObject.opposedAlertId = document.getElementById("opposedAlertId").value;
+
+             httpPutAsync( "/stock-alerts/alerts", bodyObject, function( results ){
+            	 loadAlerts();
+             });
+         }
+
+         function processSelected(){
+        	    if( dataTable.rows('.selected').data().length == 0 ){
+            	    return;
+             }
+
+             $("#processResult").empty();
+             var id = dataTable.rows('.selected').data()[0][0];
+             httpGetAsync( "/stock-alerts/alerts/" + id + "/process" , loadProcessResults);
+         }
+
+         function loadProcessResults( results ){
+        	        var resultDiv = document.getElementById( "processResult" );
+        	        var header = document.createElement("h4");
+                 header.innerHTML = "Process results";
+                 resultDiv.appendChild( header );
+        	        var results = JSON.parse(results);
+                 var alerts = [];
+                 for( var i = 0 ; i < results.length; i++){
+                    alerts.push( results[i].alert );
+                 }
+                 createTable( alerts , "processResult", 
+                           ["id", "expression", "name", "description", "sendEmail", "symbol", "opposedAlertId"],
+                           ["Id", "Expression", "Name", "Description", "Send Email", "Symbol", "Opposed Alert Id"]);
+         }
+
+
+         function processAll(){
+        	    $("#processResult").empty();
+             httpGetAsync( "/stock-alerts/alerts/process" , loadProcessResults);
+         }
+          
 
       </script>
    </head>
    
-   <body onload="startup();" style="overflow: hidden; margin: 0px; border: 0px;" >
-   Alerts
+   <!-- 
+   {
+		"id": "aluarStoploss",
+		"active": true,
+		"expression": "PRICE(ALUA.BA)<4.32",
+		"name": "StopLoss - ALUA",
+		"description": "Aluar price is too low.",
+		"sendEmail": true,
+		"symbol": "ALUA.BA",
+		"opposedAlertId": "aluarBuy"
+	}
+    -->
+   
+   <body onload="startup();" style="overflow: auto; margin: 0px; border: 0px;" >
+      <div class="container">
+         <h2>Alerts</h2>
+         <div class="panel panel-default">
+           <div class="panel-body">
+	           <form data-toggle="validator" name="alertForm" id="alertForm" onsubmit="save(event)">
+	               <div class="form-group">
+	                  <label for="id">Id</label> <input required data-minlength="1"
+	                     class="form-control" type="text" id="id">
+	               </div>
+	               <div class="checkbox">
+	                 <label><input id="activeCheckbox" type="checkbox"> Active</label>
+	               </div>
+	               <div class="form-group">
+	                  <label for="expression">Expression</label> <input type="text"
+	                     class="form-control" id="expression"
+	                     value="STOCHASTIC_K(14,TSLA)>STOCHASTIC_D(14,3,TSLA)"
+	                     required data-minlength="1">
+	               </div>
+	               <div class="form-group">
+                     <label for="name">Name</label> <input type="text"
+                        class="form-control" id="name" value="Buy Signal" required data-minlength="1">
+                  </div>
+	               <div class="form-group">
+	                  <label for="description">Description</label> <input
+	                     type="text" class="form-control" id="description"
+	                     value="There is a new Buy signal"  required data-minlength="1">
+	               </div>
+	               <div class="checkbox">
+                    <label><input id="sendEmailCheckbox" type="checkbox"> Send Email</label>
+                  </div>
+	               <div class="form-group">
+	                  <label for="tickerSymbol">TickerSymbol</label> <input type="text"
+	                     class="form-control" id="tickerSymbol" placeholder="TSLA"
+	                     required data-minlength="1">
+	               </div>
+	               <div class="form-group">
+                     <label for="opposedAlertId">Opposite Alert Id</label> 
+                     <input class="form-control" type="text" id="opposedAlertId">
+                  </div>
+	               <div class="form-group">
+	                  <button type="submit" class="btn btn-primary">Save</button>
+	               </div>
+	            </form>
+               <button type="button" class="btn btn-primary" onClick="processSelected()">Process</button>
+               <button type="button" class="btn btn-primary" onClick="processAll()">Process All</button>
+           </div>
+         </div>
+         <div id="processResult"></div>
+         <div id="alertsDiv"></div>
+      </div>
    </body>
 </html>

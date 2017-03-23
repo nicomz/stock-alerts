@@ -8,14 +8,22 @@ function httpGetAsync(theUrl, callback){
              xmlHttp.send(null);
          }
 
-function httpPostAsync(theUrl, bodyObject, callback){
+function httpAsync(theUrl, bodyObject, callback, method){
 	var xmlhttp = new XMLHttpRequest();   // new HttpRequest instance 
 	xmlhttp.onreadystatechange = function() { 
 		if (xmlhttp.readyState == 4 && xmlhttp.status == 200)
 			callback(xmlhttp.responseText);
 	}
-	xmlhttp.open("POST", theUrl, true);
+	xmlhttp.open(method, theUrl, true);
 	xmlhttp.setRequestHeader("Content-Type", "application/json");
 	xmlhttp.send( JSON.stringify( bodyObject ) );
 	
+}
+
+function httpPostAsync(theUrl, bodyObject, callback){
+	httpAsync(theUrl, bodyObject, callback, 'POST');
+}
+
+function httpPutAsync(theUrl, bodyObject, callback){
+	httpAsync(theUrl, bodyObject, callback, 'PUT');
 }
