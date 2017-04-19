@@ -27,7 +27,7 @@ public class UtilTest {
       for(int i = 0; i < prices.length; i++){
          quote = new Quote();
          quote.setClose( new BigDecimal(prices[i]) );
-         quote.setSymbol( "APBR.BA" );
+         quote.setId( new QuoteId("APBR.BA", null) );
          quotes.add( quote );
       }
    }

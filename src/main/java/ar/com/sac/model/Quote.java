@@ -3,14 +3,16 @@ package ar.com.sac.model;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import java.math.BigDecimal;
 import java.util.Calendar;
+import javax.persistence.EmbeddedId;
+import javax.persistence.Entity;
 import yahoofinance.histquotes.HistoricalQuote;
 import yahoofinance.quotes.stock.StockQuote;
 
+@Entity
 public class Quote {
    
-   private String symbol;
-   
-   private Calendar date;
+   @EmbeddedId
+   private QuoteId id;
    
    private BigDecimal open;
    private BigDecimal low;
@@ -23,8 +25,7 @@ public class Quote {
    }
    
    public Quote(StockQuote stockQuote){
-      this.symbol = stockQuote.getSymbol();
-      this.date = stockQuote.getLastTradeTime();
+      setId( new QuoteId(stockQuote.getSymbol(), stockQuote.getLastTradeTime()));
       this.open = stockQuote.getOpen();
       this.low = stockQuote.getDayLow();
       this.high = stockQuote.getDayHigh();
@@ -34,8 +35,7 @@ public class Quote {
    }
    
    public Quote(HistoricalQuote historicalQuote){
-      this.symbol = historicalQuote.getSymbol();
-      this.date = historicalQuote.getDate();
+      setId( new QuoteId(historicalQuote.getSymbol(), historicalQuote.getDate()));
       this.open = historicalQuote.getOpen();
       this.low = historicalQuote.getLow();
       this.high = historicalQuote.getHigh();
@@ -45,12 +45,12 @@ public class Quote {
    
    @JsonSerialize(using = CalendarSerializer.class)
    public Calendar getDate(){
-      return date;
+      return id.getDate();
    }
 
    
    public synchronized String getSymbol() {
-      return symbol;
+      return id.getSymbol();
    }
 
    
@@ -79,15 +79,6 @@ public class Quote {
    }
 
    
-   public synchronized void setSymbol( String symbol ) {
-      this.symbol = symbol;
-   }
-
-   
-   public synchronized void setDate( Calendar date ) {
-      this.date = date;
-   }
-
    
    public synchronized void setOpen( BigDecimal open ) {
       this.open = open;
@@ -111,6 +102,14 @@ public class Quote {
    
    public synchronized void setVolume( Long volume ) {
       this.volume = volume;
+   }
+
+   public QuoteId getId() {
+      return id;
+   }
+
+   public void setId( QuoteId id ) {
+      this.id = id;
    }
    
 }

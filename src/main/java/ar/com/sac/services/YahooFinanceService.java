@@ -40,6 +40,14 @@ public class YahooFinanceService {
       return stock.getHistory( from, to, Interval.DAILY );
    }
    
+   /**
+    * Always returns a map with its keySet full of the symbols passed as parameters
+    * @param symbols
+    * @param from
+    * @param to
+    * @return
+    * @throws IOException
+    */
    public Map<String, List<HistoricalQuote>> getHistory( String[] symbols, Calendar from, Calendar to ) throws IOException{
       Map<String, Stock> map = YahooFinance.get( symbols, from, to, Interval.DAILY );
       Map<String, List<HistoricalQuote>> resultMap = new HashMap<String, List<HistoricalQuote>>();

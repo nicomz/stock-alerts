@@ -3,6 +3,7 @@ package ar.com.sac.services;
 import ar.com.sac.model.IStockWrapper;
 import ar.com.sac.model.Quote;
 import ar.com.sac.model.StockWrapper;
+import ar.com.sac.services.dao.QuoteDAO;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -15,6 +16,9 @@ import yahoofinance.histquotes.HistoricalQuote;
 
 @Service
 public class StockService implements IStockService{
+   
+   @Autowired
+   private QuoteDAO quoteDAO;
    
    @Autowired
    private YahooFinanceService yahooFinanceService;
@@ -38,7 +42,7 @@ public class StockService implements IStockService{
 
       //take the last quote from current day
       Quote todayQuote = new Quote(yahooFinanceService.getStock( symbol ).getQuote());
-      if(quotes.get( 0 ).getDate().get( Calendar.DATE ) != todayQuote.getDate().get( Calendar.DATE )){
+      if(quotes.size() == 0 || quotes.get( 0 ).getDate().get( Calendar.DATE ) != todayQuote.getDate().get( Calendar.DATE )){
          quotes.add( 0, todayQuote );
       }
       
