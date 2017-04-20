@@ -19,7 +19,7 @@ import java.util.Map;
 public class Simulation {
    
    private SimulatorParameters parameters;
-   private StockService stockService;
+   private IStockService stockService;
    private ExpressionService expressionService;
    private SimulationResults simulationResults = new SimulationResults();
    private StockSimulatorService stockSimulatorService = new StockSimulatorService();
@@ -29,13 +29,14 @@ public class Simulation {
    private String currentSymbol;
    private Quote currentLastQuote;
    private List<Quote> allTheQuotes = new ArrayList<>(); //all The quotes between from and to years
+   //This map is because not all the quotes begins at the same date
    private Map<String, Integer> indexPerSymbolMap  = new HashMap<>();
    private Map<String, List<Quote>> symbolToQuotesMap  = new HashMap<>();
    private Map<String, SimulatorRecord> positionsMap = new HashMap<>();
    private Map<String, SymbolPerformanceStatistics> performanceBySymbolMap = new HashMap<>();
    private SimulatorRecord lastSimulatorRecord;
 
-   public Simulation( SimulatorParameters parameters, StockService stockService, ExpressionService expressionService ){
+   public Simulation( SimulatorParameters parameters, IStockService stockService, ExpressionService expressionService ){
       this.parameters = parameters;
       this.stockService = stockService;
       this.expressionService = expressionService;

@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 public class SimulatorService {
    
    @Autowired
-   private StockService stockService;
+   private IStockService stockService;
    @Autowired
    private ExpressionService expressionService;
    

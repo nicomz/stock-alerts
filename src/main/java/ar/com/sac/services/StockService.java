@@ -7,14 +7,22 @@ import ar.com.sac.services.dao.QuoteDAO;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import yahoofinance.histquotes.HistoricalQuote;
 
 @Service
+@EnableScheduling
+@PropertySource("classpath:application.properties")
+@Transactional
 public class StockService implements IStockService{
    
    @Autowired
@@ -22,6 +30,9 @@ public class StockService implements IStockService{
    
    @Autowired
    private YahooFinanceService yahooFinanceService;
+   
+   @Value("${stocks.db.enable}")
+   private Boolean usingDB;
 
    public IStockWrapper getStock( String symbol ) throws IOException{
       return new StockWrapper( yahooFinanceService.getStock( symbol ) );
@@ -37,8 +48,14 @@ public class StockService implements IStockService{
    }
    
    public List<Quote> getHistory( String symbol, Calendar from, Calendar to ) throws IOException{
-      List<HistoricalQuote> history = yahooFinanceService.getHistory( symbol, from, to );
-      List<Quote> quotes = historyToQuotes( history );
+      List<Quote> quotes = quoteDAO.findByRange( symbol, from, to );
+      
+      if( usingDB ){
+         quotes = quoteDAO.findByRange( symbol, from, to );
+      }else{
+         List<HistoricalQuote> history = yahooFinanceService.getHistory( symbol, from, to );
+         quotes = historyToQuotes( history );
+      }
 
       //take the last quote from current day
       Quote todayQuote = new Quote(yahooFinanceService.getStock( symbol ).getQuote());
@@ -65,4 +82,12 @@ public class StockService implements IStockService{
       }
       return quotes;
    }
+   
+   @Transactional
+   public void importQuotes(Collection<Quote> quotes){
+      for(Quote quote : quotes){
+         quoteDAO.persist( quote );
+      }
+   }
+   
 }

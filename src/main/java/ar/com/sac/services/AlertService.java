@@ -22,7 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class AlertService {
    
    @Autowired
-   private StockService stockService;
+   private IStockService stockService;
    @Autowired
    private EmailService emailService;
    @Autowired

@@ -10,6 +10,9 @@ public class QuoteId implements Serializable {
    private String symbol;
    private Calendar date;
    
+   public QuoteId(){
+      //Default constructor
+   }
    
    public QuoteId( String symbol, Calendar date ) {
       this.symbol = symbol;

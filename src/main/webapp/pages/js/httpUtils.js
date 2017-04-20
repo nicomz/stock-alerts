@@ -27,3 +27,17 @@ function httpPostAsync(theUrl, bodyObject, callback){
 function httpPutAsync(theUrl, bodyObject, callback){
 	httpAsync(theUrl, bodyObject, callback, 'PUT');
 }
+
+function httpPostFile( propertyName, file, theUrl, callback){
+	var formData = new FormData();
+	formData.append(propertyName, file);
+
+	var xhr = new XMLHttpRequest();
+	xhr.onreadystatechange = function() { 
+		if (xhr.readyState == 4 && xhr.status == 200)
+			callback(xhr.responseText);
+	}
+	xhr.open("POST", theUrl);
+//	xhr.setRequestHeader("Content-Type", "multipart/form-data");
+	xhr.send(formData);
+}

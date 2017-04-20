@@ -2,15 +2,25 @@ package ar.com.sac.controllers;
 
 import ar.com.sac.model.IStockWrapper;
 import ar.com.sac.model.Quote;
-import ar.com.sac.services.StockService;
+import ar.com.sac.model.QuoteId;
+import ar.com.sac.services.IStockService;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import yahoofinance.Utils;
+import yahoofinance.YahooFinance;
 
 @EnableWebMvc
 @RestController
@@ -18,7 +28,7 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 public class StocksController {
    
    @Autowired
-   private StockService stockService;
+   private IStockService stockService;
    
    @RequestMapping(method = RequestMethod.GET)
    public IStockWrapper get(@RequestParam("symbol") String symbol ) throws IOException {
@@ -29,5 +39,41 @@ public class StocksController {
    public List<Quote> getHistory(@RequestParam("symbol") String symbol ) throws IOException {
       return stockService.getHistory( symbol );
    }
+   
+   @RequestMapping( value = "/import/csv", method = RequestMethod.POST )
+   public ResponseEntity<HttpStatus> importQuotes( @RequestParam( value = "symbol" ) String symbol,
+                                                   @RequestPart( value = "content_file" ) MultipartFile input ) throws IOException {
 
+      List<Quote> quotes = new ArrayList<>();
+      BufferedReader reader=new BufferedReader(new InputStreamReader(input.getInputStream()));
+
+      int lineNumber = 0;
+      while(reader.ready()){
+           String line = reader.readLine();
+           if(lineNumber == 0){
+              lineNumber++;
+              continue;
+           }
+           quotes.add( parseCSVLine(symbol, line) );
+           lineNumber++;
+      }
+      
+      stockService.importQuotes( quotes );
+
+      return new ResponseEntity<HttpStatus> ( HttpStatus.OK );
+   }
+
+   //This method is similar to the parseCSVLine from YahooFinanceAPI
+   private Quote parseCSVLine( String symbol, String line ) {
+      Quote quote = new Quote();
+      String[] data = line.split(YahooFinance.QUOTES_CSV_DELIMITER);
+      quote.setId( new QuoteId(symbol,  Utils.parseHistDate(data[0])) );
+      quote.setOpen( Utils.getBigDecimal(data[1]));
+      quote.setHigh(Utils.getBigDecimal(data[2]));
+      quote.setLow( Utils.getBigDecimal(data[3]));
+      quote.setClose(Utils.getBigDecimal(data[4]));
+      quote.setVolume(Utils.getLong(data[5]));
+      return quote;
+   }
+   
 }

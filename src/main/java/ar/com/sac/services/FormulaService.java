@@ -25,7 +25,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class FormulaService {
    @Autowired
-   private StockService stockService;
+   private IStockService stockService;
    
    public BigDecimal getAverage(int period, String symbol) throws IOException{
       List<Quote> quotes  = stockService.getHistory( symbol );

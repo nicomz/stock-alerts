@@ -47,6 +47,19 @@
              httpGetAsync( url, stockToPage );
          }
 
+         function importQuotes( event ){
+        	    //avoids default submit process
+             event.preventDefault();
+             var file = document.getElementById("importCSVFile").files[0];
+             var tickerInput = document.getElementById( "importSymbol" );
+             var url = "/stock-alerts/stocks/import/csv?symbol=" + tickerInput.value;
+             httpPostFile( "content_file", file, url, importCallback);
+         }
+
+         function importCallback( result ){
+             alert('File import ' + result)
+         }
+
          function stockToPage( result ){
         	    var historyCheckbox = document.getElementById( "historyCheckbox" );
         	    var history;
@@ -102,7 +115,34 @@
 				  </div>
 				</form>
 			</div>
+			
 		</div>
+		<div class="panel panel-default">
+			<div class="panel-body">
+		      <h4>Import Quotes</h4>
+			   <form data-toggle="validator" name="importForm" id="importForm" onsubmit="importQuotes(event)">
+			     <div class="form-group">
+                <label for="tickerSymbol">Ticker Symbol</label>
+                <input type="text" class="form-control" id="importSymbol" aria-describedby="symbolHelp" placeholder="TSLA" required data-minlength="1">
+                <small id="symbolHelp" class="form-text text-muted">Use Yahoo notation (".BA" for Buenos Aires stocks)</small>
+              </div>
+              <div class="form-group">
+	              <input id="importCSVFile" type="file" style="/*display: none;*/" required>
+	              <!-- <div class="input-group">
+	                <label class="input-group-btn">
+	                   <input id="importCSVFile" type="file" style="display: none;" required>
+	                </label>
+	                <input id="importCSVName" type="text" class="form-control" readonly>
+	              </div>
+	               -->
+              </div>
+              
+              <div class="form-group">
+                <button type="submit" class="btn btn-primary">Import</button>
+              </div>
+            </form>
+         </div>
+      </div>
 		<div id="resultDiv">
 		</div>
 		<svg id="visualisation" width="1000" height="500"></svg>
