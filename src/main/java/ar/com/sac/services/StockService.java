@@ -86,7 +86,7 @@ public class StockService implements IStockService{
    @Transactional
    public void importQuotes(Collection<Quote> quotes){
       for(Quote quote : quotes){
-         quoteDAO.persist( quote );
+         quoteDAO.update( quote );
       }
    }
    
