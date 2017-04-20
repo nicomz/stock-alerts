@@ -57,7 +57,7 @@
          }
 
          function importCallback( result ){
-             alert('File import ' + result)
+             alert('File import successfully!')
          }
 
          function stockToPage( result ){
@@ -91,6 +91,22 @@
              }
              createTable( history, "resultDiv", ["date","open","low","high","close","volume"], ["Date","Open","Low","High","Close","Volume"] );
              createChart( history, "visualisation", "date", "close" , null, ["Price"]);
+         }
+
+         function getCSVFile( event ){
+        	//avoids default submit process
+             event.preventDefault();
+             var tickerInput = document.getElementById( "getCSVFileSymbol" );
+             var fromYearInput = document.getElementById( "fromYear" );
+             var url = "http://ichart.finance.yahoo.com/table.csv?s=" + tickerInput.value + "&c=" + fromYearInput.value;
+             var win = window.open(url, "_blank");
+             if (win) {
+            	    //Browser has allowed it to be opened
+            	    win.focus();
+            	} else {
+            	    //Browser has blocked it
+            	    alert('Please allow popups for this website');
+            	}
          }
 
    </script>
@@ -128,17 +144,30 @@
               </div>
               <div class="form-group">
 	              <input id="importCSVFile" type="file" style="/*display: none;*/" required>
-	              <!-- <div class="input-group">
-	                <label class="input-group-btn">
-	                   <input id="importCSVFile" type="file" style="display: none;" required>
-	                </label>
-	                <input id="importCSVName" type="text" class="form-control" readonly>
-	              </div>
-	               -->
               </div>
               
               <div class="form-group">
                 <button type="submit" class="btn btn-primary">Import</button>
+              </div>
+            </form>
+         </div>
+      </div>
+      <div class="panel panel-default">
+         <div class="panel-body">
+            <h4>Get CSV File from Yahoo</h4>
+            <form data-toggle="validator" name="getCSVForm" id="importForm" onsubmit="getCSVFile(event)">
+              <div class="form-group">
+                <label for="tickerSymbol">Ticker Symbol</label>
+                <input type="text" class="form-control" id="getCSVFileSymbol" aria-describedby="symbolHelp" placeholder="TSLA" required data-minlength="1">
+                <small id="symbolHelp" class="form-text text-muted">Use Yahoo notation (".BA" for Buenos Aires stocks)</small>
+              </div>
+              <div class="form-group">
+                  <label for="averagePeriod">From Year</label>
+                  <input class="form-control" type="number"  min="1900" value="1999" id="fromYear" required>
+              </div>
+              
+              <div class="form-group">
+                <button type="submit" class="btn btn-primary">Get CSV File</button>
               </div>
             </form>
          </div>
