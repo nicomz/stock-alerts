@@ -58,10 +58,14 @@ Configure your financial alerts from your favorite stock market and receive noti
   * Sends a test email, useful to test email configuration
 
 #### Stocks
-* GET /stock-alerts/stocks?symbol=GOOGL
+* GET /stock-alerts/stocks/GOOGL
   * Returns stock information
-* GET /stock-alerts/stocks/history?symbol=GOOGL
+* GET /stock-alerts/stocks/history/GOOGL
   * Returns historical stock information
+* GET /stock-alerts/stocks/symbols
+  * Returns all ticker symbols loaded in database
+* POST /stock-alerts/stocks/import/csv?symbol=GOOGL
+  * Import a csv file with historical quotes in a parameter called "content_file"
 
 #### Formulas
 * GET /stock-alerts/formulas/price?symbol=GOOGL
