@@ -23,5 +23,7 @@ public interface IStockService {
    public void importQuotes(Collection<Quote> quotes);
 
    public List<String> getSymbols();
+   
+   public void updateDBJob();
 
 }

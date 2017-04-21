@@ -73,4 +73,11 @@ public class StockSimulatorService implements IStockService {
       return resultList;
    }
 
+   /**
+    * Don't use this method in simulations
+    */
+   @Override
+   public void updateDBJob() {
+   }
+
 }

@@ -89,4 +89,10 @@ public class StocksController {
       return stockService.getSymbols();
    }
    
+   @RequestMapping(value="/daily_update" ,method = RequestMethod.GET)
+   public ResponseEntity<HttpStatus> dailyUpdateDB() throws IOException {
+      stockService.updateDBJob();
+      return new ResponseEntity<HttpStatus> ( HttpStatus.OK );
+   }
+   
 }

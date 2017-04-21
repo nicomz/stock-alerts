@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import yahoofinance.Stock;
@@ -104,4 +106,20 @@ public class StockService implements IStockService{
       return quoteDAO.getLoadedSymbols();
    }
    
+   /**
+    * Update DB with last quote of every ticker loaded
+    */
+   @Scheduled(cron = "${stocks.dailyUpdateDB.cron}")
+   public void updateDBJob(){
+      System.out.println( "Update DataBase JOB: " + new Date() );
+      List<String> symbols = getSymbols();
+      try {
+         Map<String, IStockWrapper> map = getStocks( symbols.toArray( new String[symbols.size()] ) );
+         for(IStockWrapper stock : map.values()){
+            quoteDAO.update( stock.getLastQuote() );
+         }
+      } catch (IOException e) {
+         e.printStackTrace();
+      }
+   }
 }
