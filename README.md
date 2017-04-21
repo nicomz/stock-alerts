@@ -60,6 +60,8 @@ Configure your financial alerts from your favorite stock market and receive noti
 #### Stocks
 * GET /stock-alerts/stocks/GOOGL
   * Returns stock information
+* GET /stock-alerts/stocks?symbols=GOOGL,AAPL
+  * Returns stock information from several ticker symbols
 * GET /stock-alerts/stocks/history/GOOGL
   * Returns historical stock information
 * GET /stock-alerts/stocks/symbols
