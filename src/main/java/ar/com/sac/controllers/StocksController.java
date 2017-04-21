@@ -47,6 +47,7 @@ public class StocksController {
       return stockService.getHistory( symbol );
    }
    
+   
    @RequestMapping( value = "/import/csv", method = RequestMethod.POST )
    public ResponseEntity<HttpStatus> importQuotes( @RequestParam( value = "symbol" ) String symbol,
                                                    @RequestPart( value = "content_file" ) MultipartFile input ) throws IOException {
@@ -81,6 +82,11 @@ public class StocksController {
       quote.setClose(Utils.getBigDecimal(data[4]));
       quote.setVolume(Utils.getLong(data[5]));
       return quote;
+   }
+   
+   @RequestMapping(value="/symbols" ,method = RequestMethod.GET)
+   public List<String> getSymbols() throws IOException {
+      return stockService.getSymbols();
    }
    
 }

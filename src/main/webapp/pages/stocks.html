@@ -60,6 +60,18 @@
              alert('File import successfully!')
          }
 
+         function getSymbols(){
+        	    $("#resultDiv").empty();
+             $("#visualisation").empty();
+             var url = "/stock-alerts/stocks/symbols";
+             httpGetAsync( url, loadSymbols );
+         }
+
+         function loadSymbols( result ){
+        	    var resultDiv = document.getElementById( "resultDiv" );
+        	    resultDiv.innerHTML = result;
+         }
+
          function stockToPage( result ){
         	    var historyCheckbox = document.getElementById( "historyCheckbox" );
         	    var history;
@@ -128,6 +140,7 @@
 			     </div>
 			     <div class="form-group">
 				    <button type="submit" class="btn btn-primary">Consult</button>
+				    <button type="button" class="btn btn-primary" onClick="getSymbols()">Get loaded Ticker Symbols</button>
 				  </div>
 				</form>
 			</div>

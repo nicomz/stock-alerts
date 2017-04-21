@@ -64,6 +64,13 @@ public class StockSimulatorService implements IStockService {
    public void importQuotes( Collection<Quote> quotes ) {
       this.quotes.addAll( quotes );
    }
-
+   
+   public List<String> getSymbols(){
+      List<String> resultList = new ArrayList<>();
+      if(quotes.size() > 0){
+         resultList.add( quotes.get(0).getSymbol() );
+      }
+      return resultList;
+   }
 
 }

@@ -25,5 +25,11 @@ public class QuoteDAO extends AbstractDAO<Quote, QuoteId> {
       query.setParameter( "to", to );
       return query.getResultList();
    }
+
+   public List<String> getLoadedSymbols() {
+      String queryStr = "Select DISTINCT q.id.symbol From Quote q";
+      queryStr += " ORDER BY q.id.symbol";
+      return getEntityManager().createQuery(queryStr, String.class).getResultList();
+   }
    
 }

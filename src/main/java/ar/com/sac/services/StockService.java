@@ -100,4 +100,8 @@ public class StockService implements IStockService{
       }
    }
    
+   public List<String> getSymbols(){
+      return quoteDAO.getLoadedSymbols();
+   }
+   
 }
