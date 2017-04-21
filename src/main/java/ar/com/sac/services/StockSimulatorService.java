@@ -28,6 +28,19 @@ public class StockSimulatorService implements IStockService {
       return stock;
    }
 
+   /**
+    * Don't use this method in simulations
+    */
+   @Override
+   public Map<String, IStockWrapper> getStocks( String[] symbol ) throws IOException {
+      Map<String,IStockWrapper> resultMap = new HashMap<>();
+      if(quotes.size() > 0){
+         resultMap.put( symbol[0], new SimulatorStockWrapper( symbol[0], quotes.get( 0 ) ) );
+      }
+      
+      return resultMap;
+   }
+
    @Override
    public List<Quote> getHistory( String symbol ) throws IOException {
       return quotes;
@@ -38,6 +51,9 @@ public class StockSimulatorService implements IStockService {
       return quotes;
    }
 
+   /**
+    * Don't use this method in simulations
+    */
    @Override
    public Map<String, List<Quote>> getHistory( String[] symbols, Calendar from, Calendar to ) throws IOException {
       // TODO implement this method correctly
@@ -48,5 +64,6 @@ public class StockSimulatorService implements IStockService {
    public void importQuotes( Collection<Quote> quotes ) {
       this.quotes.addAll( quotes );
    }
+
 
 }

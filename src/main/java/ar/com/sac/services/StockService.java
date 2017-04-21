@@ -17,6 +17,7 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import yahoofinance.Stock;
 import yahoofinance.histquotes.HistoricalQuote;
 
 @Service
@@ -36,6 +37,15 @@ public class StockService implements IStockService{
 
    public IStockWrapper getStock( String symbol ) throws IOException{
       return new StockWrapper( yahooFinanceService.getStock( symbol ) );
+   }
+   
+   public Map<String,IStockWrapper> getStocks( String[] symbols ) throws IOException{
+      Map<String,IStockWrapper> resultMap = new HashMap<>();
+      Map<String, Stock> yahooMap = yahooFinanceService.getStocks( symbols );
+      for(String symbol :  yahooMap.keySet()){
+         resultMap.put( symbol, new StockWrapper( yahooMap.get( symbol ) ) );
+      }
+      return resultMap;
    }
    
    /**

@@ -8,10 +8,12 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -30,13 +32,18 @@ public class StocksController {
    @Autowired
    private IStockService stockService;
    
-   @RequestMapping(method = RequestMethod.GET)
-   public IStockWrapper get(@RequestParam("symbol") String symbol ) throws IOException {
+   @RequestMapping(value="/{symbol}" ,method = RequestMethod.GET)
+   public IStockWrapper get(@PathVariable("symbol") String symbol ) throws IOException {
       return stockService.getStock( symbol );
    }
    
-   @RequestMapping(value= "/history", method = RequestMethod.GET)
-   public List<Quote> getHistory(@RequestParam("symbol") String symbol ) throws IOException {
+   @RequestMapping(method = RequestMethod.GET)
+   public Collection<IStockWrapper> get( @RequestParam("symbols") String[] symbols ) throws IOException {
+       return stockService.getStocks( symbols ).values();
+   }
+   
+   @RequestMapping(value= "/history/{symbol}", method = RequestMethod.GET)
+   public List<Quote> getHistory(@PathVariable("symbol") String symbol ) throws IOException {
       return stockService.getHistory( symbol );
    }
    

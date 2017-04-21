@@ -43,7 +43,7 @@
              
         	    var tickerInput = document.getElementById( "tickerSymbol" );
         	    var historyCheckbox = document.getElementById( "historyCheckbox" );
-             var url = "/stock-alerts/stocks" + (historyCheckbox.checked? "/history" :"") + "?symbol=" + tickerInput.value;
+             var url = "/stock-alerts/stocks/" + (historyCheckbox.checked? "history/" :"") + tickerInput.value;
              httpGetAsync( url, stockToPage );
          }
 

@@ -18,6 +18,10 @@ public class YahooFinanceService {
       return YahooFinance.get( symbol, true );
    }
    
+   public Map<String,Stock> getStocks( String[] symbols ) throws IOException{
+      return YahooFinance.get( symbols, true );
+   }
+   
    /**
     * Returns a year of daily quotes in DESC order. It doesn't retrieve the last price
     * @param symbol
