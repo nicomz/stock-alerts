@@ -32,7 +32,7 @@ public class StocksController {
    @Autowired
    private IStockService stockService;
    
-   @RequestMapping(value="/{symbol}" ,method = RequestMethod.GET)
+   @RequestMapping(value="/{symbol:.+}" ,method = RequestMethod.GET)
    public IStockWrapper get(@PathVariable("symbol") String symbol ) throws IOException {
       return stockService.getStock( symbol );
    }
@@ -42,7 +42,7 @@ public class StocksController {
        return stockService.getStocks( symbols ).values();
    }
    
-   @RequestMapping(value= "/history/{symbol}", method = RequestMethod.GET)
+   @RequestMapping(value= "/history/{symbol:.+}", method = RequestMethod.GET)
    public List<Quote> getHistory(@PathVariable("symbol") String symbol ) throws IOException {
       return stockService.getHistory( symbol );
    }
