@@ -123,7 +123,7 @@ public class AlertService {
          exceptionAlert.setId( "exceptionAlertFor" + alert.getId() );
          exceptionAlert.setDescription( "An Exception ocurred processing Alert: " + alert.getId() + "\n" + e.getMessage() + "\n" +  stackTraceToString(e) );
          exceptionAlert.setName( "Exception Alert For " + alert.getId() );
-         exceptionAlert.setExpression( exceptionAlert.getExpression() );
+         exceptionAlert.setExpression( alert.getExpression() );
          exceptionAlert.setSymbol( alert.getSymbol() );
          exceptionAlert.setOpposedAlertId( alert.getOpposedAlertId() );
          notification.setAlert( exceptionAlert );
