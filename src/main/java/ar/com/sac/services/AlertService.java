@@ -36,6 +36,9 @@ public class AlertService {
    @Value("${alerts.application.host}")
    private String host;
    
+   @Value("${mail.subject}")
+   private String emailSubject;
+   
    @Transactional(readOnly = true)
    public List<Alert> getAlerts(boolean onlyActive){
       return alertDAO.getAlerts( onlyActive );
@@ -53,18 +56,27 @@ public class AlertService {
    
    public List<Notification> processAlerts( List<Alert> alerts ){
       List<Notification> notifications = new ArrayList<Notification>();
+      StringBuilder sb = new StringBuilder();
       for(Alert alert : alerts){
          processAlert(alert, notifications);
       }
       
       Alert alert;
+      int i = 1;
       for(Notification notification: notifications){
          alert = notification.getAlert();
          if(!alert.getSendEmail()){
             continue;
          }
+         sb.append( "<BR>-------------------------- " + i + " --------------------------<BR>" );
+         sb.append( getEmailBody(alert) );
+         i++;
+      }
+      
+      if(sb.length()>0){
+         sb.append( getSalutation() );
          try {
-            emailService.generateAndSendEmail( getEmailSubject(alert), getEmailBody(alert) );
+            emailService.generateAndSendEmail( emailSubject, sb.toString() );
          } catch (Exception e) {
             e.printStackTrace();
          }
@@ -72,12 +84,10 @@ public class AlertService {
       return notifications;
    }
    
-   private String getEmailSubject( Alert alert ){
-      return "(Stock Alert) " + alert.getName();
-   }
-   
    private String getEmailBody( Alert alert ){
       StringBuilder sb = new StringBuilder();
+      sb.append( alert.getName() );
+      sb.append( "<BR>" );
       sb.append( alert.getDescription() );
       sb.append( "<BR>" );
       sb.append( "Expression: " + alert.getExpression().replaceAll( ">", "&gt;" ).replaceAll( "<", "&lt;" ) );
@@ -88,11 +98,13 @@ public class AlertService {
          sb.append( "<a href=\"" + generateLink(alert.getOpposedAlertId()) +  "/activate\" target=\"_blank\">Activate opposed alert " + alert.getOpposedAlertId() + "</a>" );
          sb.append( "<BR>" );
       }
-      sb.append( "<BR>" );
       sb.append( "<a href=\"http://finance.yahoo.com/chart/" + alert.getSymbol() + "\" target=\"_blank\">See the chart on Yahoo Finance</a>" );
       sb.append( "<BR>" );
-      sb.append( "<i>Stock Alerts</i><br><b>Sergio A. Cormio</b>" );
       return sb.toString();
+   }
+   
+   private String getSalutation(){
+      return "<BR><i>Stock Alerts</i><br><b>Sergio A. Cormio</b>";
    }
    
 
