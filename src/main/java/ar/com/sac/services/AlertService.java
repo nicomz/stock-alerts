@@ -4,6 +4,8 @@ import ar.com.sac.model.Alert;
 import ar.com.sac.model.Notification;
 import ar.com.sac.model.operations.Operator;
 import ar.com.sac.services.dao.AlertDAO;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -104,11 +106,27 @@ public class AlertService {
    }
 
    private void processAlert( Alert alert, List<Notification> notifications ) {
-      Operator operator = expressionService.parseExpression( alert.getExpression(), stockService );
-      if(operator.evaluate()){
+      try {
+         Operator operator = expressionService.parseExpression( alert.getExpression(), stockService );
+         if(operator.evaluate()){
+            Notification notification = new Notification();
+            notification.setCreationDate( new Date() );
+            notification.setAlert( alert );
+            notifications.add( notification  );
+         }
+      } catch (Exception e) {
          Notification notification = new Notification();
          notification.setCreationDate( new Date() );
-         notification.setAlert( alert );
+         Alert exceptionAlert = new Alert();
+         exceptionAlert.setSendEmail( true );
+         exceptionAlert.setActive( true );
+         exceptionAlert.setId( "exceptionAlertFor" + alert.getId() );
+         exceptionAlert.setDescription( "An Exception ocurred processing Alert: " + alert.getId() + "\n" + e.getMessage() + "\n" +  stackTraceToString(e) );
+         exceptionAlert.setName( "Exception Alert For " + alert.getId() );
+         exceptionAlert.setExpression( exceptionAlert.getExpression() );
+         exceptionAlert.setSymbol( alert.getSymbol() );
+         exceptionAlert.setOpposedAlertId( alert.getOpposedAlertId() );
+         notification.setAlert( exceptionAlert );
          notifications.add( notification  );
       }
    }
@@ -192,5 +210,18 @@ public class AlertService {
 
       return ret.toString();
   }
+   
+   /**
+    * This is a "Utils" method
+    * @param t
+    * @return
+    */
+   private String stackTraceToString( Throwable t ){
+      StringWriter writer = new StringWriter();
+      PrintWriter printWriter = new PrintWriter( writer );
+      t.printStackTrace( printWriter );
+      printWriter.flush();
+      return writer.toString();
+   }
 
 }
