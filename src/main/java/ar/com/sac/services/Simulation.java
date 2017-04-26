@@ -106,7 +106,7 @@ public class Simulation {
          indexPerSymbolMap.put( symbol, indexInFromYear );
          symbolToQuotesMap.put( symbol, quotesAux );
       }
-      //allThQuotes must be sorted ASC
+      //allTheQuotes must be sorted ASC
       Collections.sort( allTheQuotes, new Comparator<Quote>() {
 
          @Override

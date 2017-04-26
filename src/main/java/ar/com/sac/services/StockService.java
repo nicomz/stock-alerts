@@ -79,10 +79,14 @@ public class StockService implements IStockService{
    }
    
    public  Map<String, List<Quote>> getHistory( String[] symbols, Calendar from, Calendar to ) throws IOException{
-      Map<String, List<HistoricalQuote>> historyMap = yahooFinanceService.getHistory( symbols, from, to );
       Map<String, List<Quote>> resultMap = new HashMap<>();
-      for( String symbol : historyMap.keySet() ){
-         resultMap.put( symbol, historyToQuotes( historyMap.get( symbol ) ));
+      if( usingDB ){
+         resultMap = quoteDAO.findByRangeInBulk( symbols, from, to );
+      }else{
+         Map<String, List<HistoricalQuote>> historyMap = yahooFinanceService.getHistory( symbols, from, to );
+         for( String symbol : historyMap.keySet() ){
+            resultMap.put( symbol, historyToQuotes( historyMap.get( symbol ) ));
+         }
       }
       return resultMap;
    }
