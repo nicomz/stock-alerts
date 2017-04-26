@@ -189,5 +189,20 @@ public class SimulatorParameters {
    public synchronized void setYearTo( int yearTo ) {
       this.yearTo = yearTo;
    }
+
+
+   public static SimulatorParameters createDefault() {
+      SimulatorParameters parameters = new SimulatorParameters();
+      parameters.setInitialCapital( 100000 );
+      parameters.commissionPercentage = 0.7;
+      parameters.positionMaximumValue = 50000;
+      parameters.positionMinimumValue = 20000;
+      parameters.positionPercentage = 20;
+      parameters.stopLossPercentage = 10;
+      parameters.symbols = new String[]{ "COKE","AAPL","GOOGL","TSLA" };
+      parameters.buyExpression = "STOCHASTIC_K(14,[SYMBOL])>STOCHASTIC_D(14,3,[SYMBOL])";
+      parameters.sellExpression = "STOCHASTIC_K(14,[SYMBOL])<STOCHASTIC_D(14,3,[SYMBOL])&&[OPERATION_PERFORMANCE_PERCENTAGE]>3";
+      return parameters;
+   }
    
 }

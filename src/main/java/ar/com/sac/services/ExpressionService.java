@@ -16,6 +16,7 @@ import ar.com.sac.model.formulas.StochasticOscillatorD;
 import ar.com.sac.model.formulas.StochasticOscillatorK;
 import ar.com.sac.model.formulas.Variance;
 import ar.com.sac.model.formulas.Volume;
+import ar.com.sac.model.operations.DummyOperator;
 import ar.com.sac.model.operations.OperationConstantValue;
 import ar.com.sac.model.operations.OperationFormula;
 import ar.com.sac.model.operations.OperationTerm;
@@ -93,7 +94,8 @@ public class ExpressionService {
          }
          operator = less;
       }else{
-         throw new RuntimeException( "Invalid Expression: " + expression );
+         //throw new RuntimeException( "Invalid Expression: " + expression );
+         return new DummyOperator();
       }
       return operator;
    }
