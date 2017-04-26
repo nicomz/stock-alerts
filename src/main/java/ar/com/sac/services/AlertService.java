@@ -39,6 +39,9 @@ public class AlertService {
    @Value("${mail.subject}")
    private String emailSubject;
    
+   @Value("${mail.salutation}")
+   private String emailSalutation;
+   
    @Transactional(readOnly = true)
    public List<Alert> getAlerts(boolean onlyActive){
       return alertDAO.getAlerts( onlyActive );
@@ -74,7 +77,7 @@ public class AlertService {
       }
       
       if(sb.length()>0){
-         sb.append( getSalutation() );
+         sb.append( emailSalutation );
          try {
             emailService.generateAndSendEmail( emailSubject, sb.toString() );
          } catch (Exception e) {
@@ -103,11 +106,6 @@ public class AlertService {
       return sb.toString();
    }
    
-   private String getSalutation(){
-      return "<BR><i>Stock Alerts</i><br><b>Sergio A. Cormio</b>";
-   }
-   
-
    private String generateLink( String alertId ) {
       String link = host;
       if(!link.endsWith( "/" )){
