@@ -1,38 +1,71 @@
 package ar.com.sac.model.geneticAlgorithm;
 
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.List;
 import org.jgap.Chromosome;
 import org.jgap.Configuration;
 import org.jgap.Gene;
 import org.jgap.IChromosome;
 import org.jgap.InvalidConfigurationException;
-import org.jgap.impl.BooleanGene;
-import org.jgap.impl.IntegerGene;
 
 public class ChromosomeTranslator {
    
       private Configuration jgapConfig;
-      private int sellIndex = 4;
+      private List<GenesBuilder> buyExpressionGenesBuilders = new ArrayList<>();
+      private List<GenesBuilder> sellExpressionGenesBuilders = new ArrayList<>();
 
       public ChromosomeTranslator( Configuration jgapConfig ){
          this.jgapConfig = jgapConfig;
+         //Set up gene builders
+         buyExpressionGenesBuilders.add( new EMAGenesBuilder() );
+         buyExpressionGenesBuilders.add( new StochasticGenesBuilder() );
+         buyExpressionGenesBuilders.add( new MACDGenesBuilder() );
+         
+         
+         sellExpressionGenesBuilders.add( new EMAGenesBuilder() );
+         sellExpressionGenesBuilders.add( new StochasticGenesBuilder() );
+         sellExpressionGenesBuilders.add( new MACDGenesBuilder() );
+         sellExpressionGenesBuilders.add( new OperationPerformancePercentageGenesBuilder() );
+         setIndexes();
       }
    
 
+      private void setIndexes() {
+         int currentIndex = 0;
+         for(GenesBuilder builder : buyExpressionGenesBuilders){
+            builder.setFirstIndex( currentIndex );
+            currentIndex += builder.getSize();
+         }
+         
+         for(GenesBuilder builder : sellExpressionGenesBuilders){
+            builder.setFirstIndex( currentIndex );
+            currentIndex += builder.getSize();
+         }
+      }
+
+
       public IChromosome getSampleChromosome(){
-         Gene[] sampleGenes = new Gene[ 8 ];
+         Gene[] sampleGenes = new Gene[ calculateChromosomeSize() ];
 
          try {
             //buy
-            sampleGenes[0] = new BooleanGene(jgapConfig, true );  // Flag
-            sampleGenes[1] = new IntegerGene(jgapConfig, 1, 30 );  // Length
-            sampleGenes[2] = new IntegerGene(jgapConfig, 1, 15 );  // Period
-            sampleGenes[3] = new BooleanGene(jgapConfig, false );  // Operator
+            int i = 0;
+            Gene[] auxGenes;
+            for(GenesBuilder builder : buyExpressionGenesBuilders){
+               auxGenes = builder.getSampleGenes( jgapConfig );
+               for(int j=0; j<builder.getSize(); j++){
+                  sampleGenes[i] = auxGenes[j];
+                  i++;
+               }
+            }
             //sell
-            sampleGenes[4] = new BooleanGene(jgapConfig, true );  // Flag
-            sampleGenes[5] = new IntegerGene(jgapConfig, 1, 30 );  // Length
-            sampleGenes[6] = new IntegerGene(jgapConfig, 1, 1 );  // Period
-            sampleGenes[7] = new BooleanGene(jgapConfig, true );  // Operator
+            for(GenesBuilder builder : sellExpressionGenesBuilders){
+               auxGenes = builder.getSampleGenes( jgapConfig );
+               for(int j=0; j<builder.getSize(); j++){
+                  sampleGenes[i] = auxGenes[j];
+                  i++;
+               }
+            }
 
             return new Chromosome(jgapConfig, sampleGenes );
          } catch (InvalidConfigurationException e) {
@@ -41,41 +74,42 @@ public class ChromosomeTranslator {
          }
       }
       
+      private int calculateChromosomeSize() {
+         int size = 0;
+         for(GenesBuilder builder : buyExpressionGenesBuilders){
+            size += builder.getSize();
+         }
+         
+         for(GenesBuilder builder : sellExpressionGenesBuilders){
+            size += builder.getSize();
+         }
+         return size;
+      }
+
+
       public String getBuyExpression( IChromosome chromosome ){
-         Gene[] genes = chromosome.getGenes();
-         return translateGenes( genes, 0, sellIndex );
+         return translateGenesBuilders( chromosome, buyExpressionGenesBuilders );
       }
       
       public String getSellExpression( IChromosome chromosome ){
-         Gene[] genes = chromosome.getGenes();
-         return translateGenes( genes, sellIndex, genes.length );
+         return translateGenesBuilders( chromosome, sellExpressionGenesBuilders );
       }
-
-      private String translateGenes( Gene[] genes, int from, int to ) {
-         Gene[] genesSubSet = Arrays.copyOfRange( genes, from, to );
-         //
-         if( (Boolean) genesSubSet[0].getAllele() == false ){
-            return "";
-         }
+      
+      private String translateGenesBuilders( IChromosome chromosome, List<GenesBuilder> builders ){
          StringBuilder sb = new StringBuilder();
-         sb.append( "STOCHASTIC_K(" );
-         int length = (Integer) genesSubSet[1].getAllele();
-         sb.append( length );
-         sb.append( ",[SYMBOL])" );
-         if((Boolean) genesSubSet[3].getAllele()){
-            sb.append( "<" );
-         }else{
-            sb.append( ">" );
+         String auxPart;
+         int i = 0;
+         for(GenesBuilder builder : builders){
+            auxPart = builder.translatePart( chromosome );
+            if(auxPart.length() > 0){
+               if( i != 0 && sb.length() > 0){
+                  sb.append( "&&" );
+               }
+               sb.append( auxPart );
+            }
+            i++;
          }
-         sb.append( "STOCHASTIC_D(" );
-         sb.append( length );
-         sb.append( "," );
-         int period = (Integer) genesSubSet[2].getAllele();
-         sb.append( period );
-         sb.append( ",[SYMBOL])" );
-         //STOCHASTIC_K(14,GOOGL)>STOCHASTIC_D(14,3,GOOGL)
          return sb.toString();
       }
-
 
 }

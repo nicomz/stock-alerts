@@ -60,13 +60,16 @@ public class GeneticAlgorithmService {
       
       
       long startTime = System.currentTimeMillis(); 
-      for (int i = 0; i < parameters.getNumberOfEvolutions(); i++) { 
+      for (int i = 0; i < parameters.getNumberOfEvolutions(); i++) {
+//          printGeneration(i, population, chromosomeTranslator);
           population.evolve(); 
       } 
       long endTime = System.currentTimeMillis(); 
       System.out.println("Total evolution time: " + (endTime - startTime) + " ms"); 
 
       IChromosome bestSolution = population.getFittestChromosome();
+      System.out.println("--------------------------");
+      System.out.println( "Best Performance: $" + bestSolution.getFitnessValue() );
       System.out.println("Best buy Expression: " + chromosomeTranslator.getBuyExpression( bestSolution ));
       System.out.println("Best sell Expression: " + chromosomeTranslator.getSellExpression( bestSolution ));
       
@@ -77,6 +80,24 @@ public class GeneticAlgorithmService {
       results.setBestBuyExpression( chromosomeTranslator.getBuyExpression( bestSolution ) );
       results.setBestSellExpression( chromosomeTranslator.getSellExpression( bestSolution ) );
       return results;
+   }
+
+   private void printGeneration( int iteration, Genotype population, ChromosomeTranslator chromosomeTranslator) {
+      System.out.println("------------Generation " + iteration +"--------------");
+      System.out.println( "Population: " );
+      int i = 1;
+      for(IChromosome chromosome : population.getPopulation().getChromosomes()){
+         System.out.println( "Chromosome number " + i + " :" );
+         System.out.println( "Performance: $" + chromosome.getFitnessValue() );
+         System.out.println("Buy Expression: " + chromosomeTranslator.getBuyExpression( chromosome ));
+         System.out.println("Sell Expression: " + chromosomeTranslator.getSellExpression( chromosome ));
+         i++;
+      }
+      IChromosome bestSolution = population.getFittestChromosome();
+      System.out.println( "\nBest Chromosome in Population: " );
+      System.out.println( "Best Performance: $" + bestSolution.getFitnessValue() );
+      System.out.println("Best buy Expression: " + chromosomeTranslator.getBuyExpression( bestSolution ));
+      System.out.println("Best sell Expression: " + chromosomeTranslator.getSellExpression( bestSolution ));
    }
    
    
